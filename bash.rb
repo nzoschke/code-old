@@ -30,6 +30,7 @@ module Bash
 end
 
 require "minitest/autorun"
+
 describe Bash do
   include Bash
 
@@ -63,7 +64,9 @@ describe Bash do
   end
 
   it "times out" do
+    start = Time.now.to_f
     bash(src: "printf t0; sleep 2; printf t2;", timeout: 1).must_equal ["t0", ""]
     $?.termsig.must_equal 15
+    (Time.now.to_f - start).must_be_within_delta 1.0, 0.01
   end
 end
