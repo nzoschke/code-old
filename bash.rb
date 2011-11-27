@@ -26,17 +26,13 @@ require "minitest/autorun"
 describe Bash do
   include Bash
 
-  it "runs a shell source in bash" do
+  it "runs source in bash" do
     bash(src: "printf $SHELL").must_equal ["/bin/bash", 0]
   end
 
-  it "runs shell source and returns exit status" do
-    bash(src: "exit 0").must_equal ["", 0]
-    bash(src: "exit 2").must_equal ["", 2]
-  end
-
-  it "runs shell source and returns output and exit status" do
-    bash(src: "echo -n hello world").must_equal ["hello world", 0]
+  it "runs source and returns output and exit status" do
+    bash(src: "printf hi; exit 0").must_equal ["hi", 0]
+    bash(src: "printf hi; exit 2").must_equal ["hi", 2]
   end
 
   it "raises an exception on non-zero exit with err: true" do
