@@ -4,18 +4,16 @@ module Bash
   def bash(opts={})
     opts = {env: {}, err: false, src: "", timeout: 5}.merge(opts)
 
-    r0, w0 = IO.pipe
-    r1, w1 = IO.pipe
-    r2, w2 = IO.pipe
+    p0, p1, p2 = IO.pipe, IO.pipe, IO.pipe
 
-    w0.write opts[:src]
-    w0.close
+    p0[1].write opts[:src]
+    p0[1].close
 
-    pid = Process.spawn(opts[:env], "bash -s", in: r0, out: w1, err: w2)
+    pid = Process.spawn(opts[:env], "bash -s", in: p0[0], out: p1[1], err: p2[1])
     Process.wait(pid)
-    w1.close
-    w2.close
-    r = [r1.read, r2.read]
+    p1[1].close
+    p2[1].close
+    r = [p1[0].read, p2[0].read]
 
     raise BashError if r[1] != 0 && opts[:err]
     r
