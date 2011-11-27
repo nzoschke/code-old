@@ -15,7 +15,7 @@ module Bash
     Process.wait(pid)
     w1.close
     w2.close
-    r = [r1.read, r2.read, $?.exitstatus]
+    r = [r1.read, r2.read]
 
     raise BashError if r[1] != 0 && opts[:err]
     r
@@ -27,12 +27,16 @@ describe Bash do
   include Bash
 
   it "runs source in bash" do
-    bash(src: "printf $SHELL").must_equal ["/bin/bash", "", 0]
+    bash(src: "printf $SHELL").must_equal ["/bin/bash", ""]
   end
 
-  it "runs source and returns stdout, stderr and exit status" do
-    bash(src: "set -x; printf hi; exit 0").must_equal ["hi", "+ printf hi\n+ exit 0\n", 0]
-    bash(src: "set -x; printf hi; exit 2").must_equal ["hi", "+ printf hi\n+ exit 2\n", 2]
+  it "runs source and returns stdout and stderr" do
+    bash(src: "set -x; printf hi").must_equal ["hi", "+ printf hi\n"]
+  end
+
+  it "preserves $?" do
+    bash(src: "exit 2")
+    $?.exitstatus.must_equal 2
   end
 
   it "raises an exception on non-zero exit with err: true" do
@@ -40,7 +44,7 @@ describe Bash do
   end
 
   it "runs multiline shell scripts" do
-    o, e, _ = bash src: <<-EOF
+    o, e = bash src: <<-EOF
       echo thing1
       echo thing2
     EOF
@@ -48,6 +52,6 @@ describe Bash do
   end
 
   it "takes an env hash" do
-    bash(src: "printf $FOO", env: {"FOO" => "bar"}).must_equal ["bar", "", 0]
+    bash(src: "printf $FOO", env: {"FOO" => "bar"}).must_equal ["bar", ""]
   end
 end
