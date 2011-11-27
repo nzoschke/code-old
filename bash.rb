@@ -1,3 +1,5 @@
+require "timeout"
+
 module Bash
   class BashError < RuntimeError; end;
 
@@ -9,8 +11,15 @@ module Bash
     p0[1].write opts[:src]
     p0[1].close
 
-    pid = Process.spawn(opts[:env], "bash -s", in: p0[0], out: p1[1], err: p2[1])
-    Process.wait(pid)
+    pid = Process.spawn(opts[:env], "bash -s", in: p0[0], out: p1[1], err: p2[1], :pgroup => true)
+
+    begin
+      Timeout::timeout(opts[:timeout]) { Process.wait(pid) }
+    rescue Timeout::Error => e
+      Process.kill("-TERM", pid)
+      Process.wait(pid)
+    end
+
     p1[1].close
     p2[1].close
     r = [p1[0].read, p2[0].read]
@@ -51,5 +60,10 @@ describe Bash do
 
   it "takes an env hash" do
     bash(src: "printf $FOO", env: {"FOO" => "bar"}).must_equal ["bar", ""]
+  end
+
+  it "times out" do
+    bash(src: "printf t0; sleep 2; printf t2;", timeout: 1).must_equal ["t0", ""]
+    $?.termsig.must_equal 15
   end
 end
