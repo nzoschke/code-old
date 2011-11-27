@@ -1,0 +1,14 @@
+#!/bin/bash
+set -x
+
+BIN_DIR=$(cd $(dirname $0); pwd)
+APP_DIR=$(dirname $BIN_DIR)
+
+if [[ $APP_DIR == /app/* ]]; then
+  BIN_DIR=/tmp/app/bin
+  APP_DIR=/tmp/app
+  mv /app /tmp
+  cd $APP_DIR
+fi
+
+exec bundle exec unicorn -c etc/backend.conf.rb -p ${PORT:-5000} etc/backend.ru

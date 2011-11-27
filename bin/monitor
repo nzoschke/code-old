@@ -1,0 +1,6 @@
+#!/bin/bash
+set -x
+
+while true; do
+  sleep 30
+done
