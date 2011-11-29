@@ -3,6 +3,10 @@ module Code
     def initialize
     end
 
+    def db
+      @db ||= {}
+    end
+
     def enqueue(key, data={})
     end
 
@@ -19,12 +23,15 @@ module Code
     end
 
     def set(key, value)
+      db[key] = value
     end
 
     def get(key)
+      db[key]
     end
 
     def del(key)
+      db.delete(key)
     end
   end
 end
