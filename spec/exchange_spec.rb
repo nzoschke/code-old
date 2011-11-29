@@ -6,7 +6,7 @@ describe "Code::Exchange" do
   end
 
   it "enqueues a message and gets a reply on a unique exchange key" do
-    @ex.should_receive(:generate_key).with("ex").and_return("ex.abc123")
+    @ex.should_receive(:generate_key).and_return("ex.abc123")
     @ex.should_receive(:hostname).and_return("route.heroku.com:3117")
 
     @ex.enqueue("backend.cedar", {app_name: "noah"})  # director

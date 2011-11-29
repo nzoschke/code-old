@@ -7,9 +7,17 @@ module Code
       @db ||= {}
     end
 
+    def generate_key(prefix="ex")
+      "ex.abc123"
+    end
+
+    def hostname
+      "route.heroku.com:3117"
+    end
+
     def enqueue(key, data={})
       db[key] ||= []
-      db[key] << data
+      db[key] << data.merge(exchange_key: generate_key)
     end
 
     def dequeue(key)
@@ -17,7 +25,7 @@ module Code
     end
 
     def reply(data)
-      enqueue("ex.abc123", {app_name: "noah", hostname: "route.heroku.com:3117", exchange_key: "ex.abc123"})
+      db[data[:exchange_key]] = [data.merge(hostname: hostname)]
     end
 
     def send(key, data={})
