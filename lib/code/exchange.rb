@@ -22,6 +22,7 @@ module Code
     end
 
     def receive(key)
+      db[key]
     end
 
     def set(key, value)
