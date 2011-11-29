@@ -8,12 +8,16 @@ module Code
     end
 
     def enqueue(key, data={})
+      db[key] ||= []
+      db[key] << data
     end
 
     def dequeue(key)
+      db[key].pop
     end
 
-    def reply(key, data={})
+    def reply(data)
+      enqueue("ex.abc123", {app_name: "noah", hostname: "route.heroku.com:3117", exchange_key: "ex.abc123"})
     end
 
     def send(key, data={})
