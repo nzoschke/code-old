@@ -1,3 +1,4 @@
+require "json"
 require "redis"
 
 module Code
@@ -44,15 +45,15 @@ module Code
     end
 
     def set(key, value)
-      db[key] = value
+      redis.hset("exchanges", key, value)
     end
 
     def get(key)
-      db[key]
+      redis.hget("exchanges", key)
     end
 
     def del(key)
-      db.delete(key)
+      redis.hdel("exchanges", key)
     end
   end
 end

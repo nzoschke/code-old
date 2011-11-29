@@ -3,6 +3,7 @@ require "./lib/code"
 describe "Code::Exchange" do
   before do
     @ex = Code::Exchange.new
+    @ex.redis.flushdb
   end
 
   it "enqueues a message and gets a reply on a unique exchange key" do
