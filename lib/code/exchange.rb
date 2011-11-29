@@ -1,6 +1,12 @@
+require "redis"
+
 module Code
   class Exchange
     def initialize
+    end
+
+    def redis
+      @redis ||= Redis.connect(:url => ENV["REDIS_URL"])
     end
 
     def db

@@ -5,6 +5,7 @@ GEM
     kgio (2.6.0)
     rack (1.3.5)
     raindrops (0.8.0)
+    redis (2.2.2)
     rspec (2.7.0)
       rspec-core (~> 2.7.0)
       rspec-expectations (~> 2.7.0)
@@ -23,6 +24,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  redis
   rspec
   sqlite3
   unicorn

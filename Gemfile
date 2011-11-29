@@ -1,5 +1,6 @@
 source :rubygems
 
+gem "redis"
 gem "unicorn"
 
 group :development do
