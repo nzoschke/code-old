@@ -1,4 +1,4 @@
-require "json"
+require "yaml"
 require "redis"
 
 module Code
@@ -36,12 +36,11 @@ module Code
     end
 
     def send(key, data={})
-      raise RuntimeError if db[key]
-      db[key] = data
+      raise RuntimeError unless redis.setnx(key, YAML.dump(data))
     end
 
     def receive(key)
-      db[key]
+      YAML.load(redis.get(key))
     end
 
     def set(key, value)
