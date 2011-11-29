@@ -10,10 +10,6 @@ module Code
       @redis ||= Redis.connect(:url => ENV["REDIS_URL"])
     end
 
-    def db
-      @db ||= {}
-    end
-
     def generate_key(prefix="ex")
       "#{prefix}.#{SecureRandom.hex(8)}"
     end
@@ -23,16 +19,18 @@ module Code
     end
 
     def enqueue(key, data={})
-      db[key] ||= []
-      db[key] << data.merge(exchange_key: generate_key)
+      data.merge!(exchange_key: generate_key)
+      redis.rpush(key, YAML.dump(data))
     end
 
     def dequeue(key)
-      db[key].pop
+      k, v = redis.blpop(key, 1)
+      YAML.load(v) if v
     end
 
     def reply(data)
-      db[data[:exchange_key]] = [data.merge(hostname: hostname)]
+      data.merge!(hostname: hostname)
+      redis.rpush(data[:exchange_key], YAML.dump(data))
     end
 
     def send(key, data={})
