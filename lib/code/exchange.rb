@@ -17,6 +17,8 @@ module Code
     end
 
     def send(key, data={})
+      raise RuntimeError if db[key]
+      db[key] = data
     end
 
     def receive(key)

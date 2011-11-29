@@ -24,7 +24,7 @@ describe "Code::Exchange" do
 
   it "fails to communicate if backend did not receive last message" do
     @ex.send("ex.abc123", {app_name: "noah"})
-    proc { @ex.send("ex.abc123", {app_name: "noah"}) }.should_raise Code::Exchange::ReceiveError
+    proc { @ex.send("ex.abc123", {app_name: "noah"}) }.should raise_error
   end
 
   it "maps an app name to a unique exchange key" do
