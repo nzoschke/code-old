@@ -8,11 +8,11 @@ module Code
     end
 
     def generate_key(prefix="ex")
-      "ex.abc123"
+      "#{prefix}.#{SecureRandom.hex(8)}"
     end
 
     def hostname
-      "route.heroku.com:3117"
+      `hostname`.strip
     end
 
     def enqueue(key, data={})
