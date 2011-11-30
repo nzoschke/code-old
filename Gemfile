@@ -1,7 +1,7 @@
 source :rubygems
 
-gem "sinatra"
 gem "redis"
+gem "sinatra"
 gem "unicorn"
 
 group :development do
@@ -9,7 +9,7 @@ group :development do
 end
 
 group :test do
-  gem "rspec"
   gem "rack-test"
+  gem "rspec"
   gem "ruby-redis"
 end
