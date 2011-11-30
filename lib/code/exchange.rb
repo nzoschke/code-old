@@ -24,8 +24,9 @@ module Code
       data
     end
 
-    def dequeue(key)
-      k, v = redis.blpop(key, 1)
+    def dequeue(key, opts={})
+      opts.reverse_merge!(timeout: 1)
+      k, v = redis.blpop(key, opts[:timeout])
       YAML.load(v) if v
     end
 
