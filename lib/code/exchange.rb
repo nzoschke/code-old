@@ -21,6 +21,7 @@ module Code
     def enqueue(key, data={})
       data.merge!(exchange_key: generate_key)
       redis.rpush(key, YAML.dump(data))
+      data
     end
 
     def dequeue(key)
@@ -31,6 +32,13 @@ module Code
     def reply(data)
       data.merge!(hostname: hostname)
       redis.rpush(data[:exchange_key], YAML.dump(data))
+    end
+
+    def exchange(key, name, data={})
+      d = enqueue(key, data)
+      r = dequeue(d[:exchange_key])
+      raise RuntimeError("no backend") unless r
+      r
     end
 
     def send(key, data={})
