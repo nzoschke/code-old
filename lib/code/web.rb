@@ -9,14 +9,12 @@ module Code
       end
     end
 
-    get "/" do
-      "hello world"
-    end
-
     get "/:name.git/info/refs" do
+      redirect "/foo", 302
     end
 
     post "/:name.git/git-receive-pack" do
+      redirect "/foo", 302
     end
   end
 end
