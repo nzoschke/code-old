@@ -19,7 +19,7 @@ describe Code::Web do
   end
 
   it "requests info for a repo and redirects to a backend" do
-    @ex.should_receive(:exchange).with("backend.cedar", "code", {:app_name => "code"}).and_return(hostname: "route.heroku.com:3333")
+    @ex.should_receive(:exchange).with("backend.cedar", {:app_name => "code"}, {:name => "code"}).and_return(hostname: "route.heroku.com:3333")
 
     get "/code.git/info/refs"
     last_response.status.should == 302
