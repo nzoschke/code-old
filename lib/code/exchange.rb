@@ -38,7 +38,8 @@ module Code
     def exchange(key, name, data={})
       d = enqueue(key, data)
       r = dequeue(d[:exchange_key])
-      raise RuntimeError("no backend") unless r
+      raise RuntimeError.new("no backend") unless r
+      set(name, r)
       r
     end
 

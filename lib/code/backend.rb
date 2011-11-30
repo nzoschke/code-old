@@ -16,5 +16,24 @@ module Code
     def call(env)
       GIT.call(env)
     end
+
+    def self.monitor_exchange
+      ex = Exchange.new
+      begin
+        puts "DEQUEING..."
+        data = ex.dequeue("backend.cedar", timeout: 10)
+      end while !data
+
+      puts data.inspect
+      puts <<`EOF`
+        set -x
+        TMP_DIR=#{$root}/tmp
+        rm -rf $TMP_DIR
+        mkdir -p $TMP_DIR
+        git init --bare $TMP_DIR/code.git
+EOF
+
+      ex.reply(data)
+    end
   end
 end
