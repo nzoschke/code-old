@@ -1,6 +1,17 @@
 require "./lib/code"
 
 describe "Code::Exchange" do
+  before(:all) do
+    r, w = IO.pipe
+    @redis_pid = Process.spawn("bundle exec ruby-redis", :out => w)
+    r.readpartial(1024) # block until server flushes logs with pid
+  end
+
+  after(:all) do
+    Process.kill("TERM", @redis_pid)
+    Process.wait(@redis_pid)
+  end
+
   before do
     @ex = Code::Exchange.new
     @ex.redis.flushdb
