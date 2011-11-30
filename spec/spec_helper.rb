@@ -1,5 +1,5 @@
+ENV["RACK_ENV"]  = "test"
+ENV["REDIS_URL"] = "redis://localhost:6379"
+
 require "rack/test"
 require "./lib/code"
-
-ENV["REDIS_URL"] = "redis://localhost:6379"
-set :environment, :test
