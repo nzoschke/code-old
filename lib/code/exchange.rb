@@ -1,5 +1,7 @@
-require "yaml"
+$:.delete_if { |p| p =~ /ruby-redis/ } # ruby-redis messes up Redis module; remove from path
+
 require "redis"
+require "yaml"
 
 module Code
   class Exchange
