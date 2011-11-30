@@ -19,7 +19,7 @@ module Code
     helpers Helpers
 
     get "/:app_name.git/info/refs" do
-      d = exchange.exchange("backend.cedar", params[:app_name], {app_name: params[:app_name]})
+      d = exchange.exchange("backend.cedar", {app_name: params[:app_name]}, name: params[:app_name])
       forward! d[:hostname]
     end
 
