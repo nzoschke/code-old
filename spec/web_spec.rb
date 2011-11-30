@@ -8,8 +8,8 @@ describe Code::Web do
   include Code::Helpers
 
   before do
-    @ex = exchange
-    @ex.redis.flushdb
+    @ex = mock("exchange")
+    Code::Exchange.stub!(:new).and_return(@ex)
   end
 
   def app
@@ -19,12 +19,16 @@ describe Code::Web do
   end
 
   it "requests info for a repo and redirects to a backend" do
+    @ex.should_receive(:exchange).with("backend.cedar", {:app_name => "code"}).and_return(hostname: "route.heroku.com:3333")
+
     get "/code.git/info/refs"
     last_response.status.should == 302
     last_response.location.should == "https://route.heroku.com:3333/code.git/info/refs"
   end
 
   it "posts a pack to a repo and redirects to a backend" do
+    @ex.should_receive(:get).with("code").and_return(hostname: "route.heroku.com:3333")
+
     post "/code.git/git-receive-pack?foo=bar"
     last_response.status.should == 302
     last_response.location.should == "https://route.heroku.com:3333/code.git/git-receive-pack"

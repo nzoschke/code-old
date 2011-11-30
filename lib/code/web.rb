@@ -11,12 +11,14 @@ module Code
   class Web < Sinatra::Application
     helpers Helpers
 
-    get "/:name.git/info/refs" do
-      redirect "https://route.heroku.com:3333/code.git/info/refs", 302
+    get "/:app_name.git/info/refs" do
+      d = exchange.exchange("backend.cedar", {app_name: params[:app_name]})
+      redirect "https://#{d[:hostname]}/code.git/info/refs", 302
     end
 
-    post "/:name.git/git-receive-pack" do
-      redirect "https://route.heroku.com:3333/code.git/git-receive-pack", 302
+    post "/:app_name.git/git-receive-pack" do
+      d = exchange.get(params[:app_name])
+      redirect "https://#{d[:hostname]}/code.git/git-receive-pack", 302
     end
   end
 end
