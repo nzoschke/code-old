@@ -15,7 +15,7 @@ module Code
     end
 
     def hostname
-      `hostname`.strip
+      "localhost:#{ENV["PORT"]}"
     end
 
     def enqueue(key, data={})
@@ -31,7 +31,7 @@ module Code
     end
 
     def reply(data)
-      data.merge!(hostname: hostname)
+      data.reverse_merge!(hostname: hostname)
       redis.rpush(data[:exchange_key], YAML.dump(data))
     end
 
