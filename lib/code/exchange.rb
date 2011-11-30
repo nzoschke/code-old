@@ -51,11 +51,12 @@ module Code
     end
 
     def set(key, value)
-      redis.hset("exchanges", key, value)
+      redis.hset("exchanges", key, YAML.dump(value))
     end
 
     def get(key)
-      redis.hget("exchanges", key)
+      v = redis.hget("exchanges", key)
+      YAML.load(v) if v
     end
 
     def del(key)
