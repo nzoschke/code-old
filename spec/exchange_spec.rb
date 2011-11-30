@@ -1,4 +1,4 @@
-require "./lib/code"
+require "./spec/spec_helper"
 
 describe "Code::Exchange" do
   before(:all) do

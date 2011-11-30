@@ -1,7 +1,4 @@
-require "rack/test"
-require "./lib/code"
-
-set :environment, :test
+require "./spec/spec_helper"
 
 describe Code::Web do
   include Rack::Test::Methods
