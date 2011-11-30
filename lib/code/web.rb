@@ -10,7 +10,7 @@ module Code
     def forward!(hostname)
       url  = "http://#{hostname}"
       url += env["PATH_INFO"]
-      url += env["QUERY_STRING"] unless env["QUERY_STRING"].empty?
+      url += "?" + env["QUERY_STRING"] unless env["QUERY_STRING"].empty?
       redirect url, 302
     end
   end
