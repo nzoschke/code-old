@@ -19,7 +19,7 @@ module Code
     end
 
     def enqueue(key, data={})
-      data.merge!(exchange_key: generate_key)
+      data.merge!(created_at: Time.now, exchange_key: generate_key)
       redis.rpush(key, YAML.dump(data))
       data
     end
