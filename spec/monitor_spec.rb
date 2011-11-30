@@ -18,7 +18,7 @@ describe "Code::Monitor" do
   end
 
   it "starts a new process with an environment" do
-    pid = @mon.start("bin/monitor", {"PORT" => "5100"})
+    pid = @mon.start("sleep 10", {"PORT" => "5100"})
     @mon.processes.should == [pid]
   end
 
@@ -27,11 +27,18 @@ describe "Code::Monitor" do
   end
 
   it "polls running processes" do
-    @mon.poll("bin/monitor") == []
+    @mon.start_all("sleep 10")
+    @mon.poll.length.should == 5
+
+    @mon.kill(@mon.processes.first)
+    @mon.poll.length.should == 4
+
+    @mon.start_all("sleep 10")
+    @mon.poll.length.should == 5
   end
 
   it "starts monitors to satisfy num_monitors" do
-    @mon.start_all("bin/monitor")
+    @mon.start_all("sleep 10")
     @mon.processes.length.should == 5
   end
 

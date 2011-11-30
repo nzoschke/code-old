@@ -14,15 +14,17 @@ module Code
     end
 
     def start_all(cmd)
-      (num_processes - poll(cmd).length).times { start(cmd, generate_env) }
+      (num_processes - poll.length).times { start(cmd, generate_env) }
+      processes
     end
 
     def kill_all
       processes.each { |pid| kill pid }
     end
 
-    def poll(cmd)
-      processes
+    def poll
+      @processes.select! { |pid| Process.kill(0, pid) rescue false }
+      @processes
     end
 
     def gc
@@ -33,7 +35,6 @@ module Code
     end
 
     def spawn(cmd, env={})
-      puts env.inspect
       Process.spawn(env, cmd)
     end
 
