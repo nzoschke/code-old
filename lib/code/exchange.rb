@@ -35,11 +35,13 @@ module Code
       redis.rpush(data[:exchange_key], YAML.dump(data))
     end
 
-    def exchange(key, name, data={})
+    def exchange(key, data={}, opts={})
+      opts.reverse_merge!(name: nil, timeout: 1)
+
       d = enqueue(key, data)
-      r = dequeue(d[:exchange_key])
+      r = dequeue(d[:exchange_key], opts)
       raise RuntimeError.new("no backend") unless r
-      set(name, r)
+      set(opts[:name], r) if opts[:name]
       r
     end
 

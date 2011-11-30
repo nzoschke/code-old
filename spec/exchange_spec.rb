@@ -6,6 +6,12 @@ describe "Code::Exchange" do
     @ex.redis.flushdb
   end
 
+  it "exchanges with a backend, and caches the exchange key" do
+    _ex = Code::Exchange.new
+    Thread.new { _ex.reply _ex.dequeue("backend.cedar") }
+    @ex.exchange("backend.cedar", {app_name: "noah"}, name: "noah")
+  end
+
   it "enqueues a message and gets a reply on a unique exchange key" do
     @ex.should_receive(:generate_key).and_return("ex.abc123")
     @ex.should_receive(:hostname).and_return("route.heroku.com:3117")
