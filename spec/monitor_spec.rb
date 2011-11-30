@@ -19,7 +19,7 @@ describe "Code::Monitor" do
   end
 
   it "generates an environment" do
-    @mon.generate_env.should == {PORT: 9999}
+    @mon.generate_env.should == {PORT: an_instance_of(Fixnum)}
   end
 
   it "polls running processes" do

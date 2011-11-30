@@ -12,5 +12,9 @@ module Code
       @processes << pid
       pid
     end
+
+    def generate_env
+      {PORT: (5000..6000).to_a.sample}
+    end
   end
 end
