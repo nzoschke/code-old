@@ -5,6 +5,10 @@ describe "Code::Monitor" do
     @mon = Code::Monitor.new
   end
 
+  after do
+    @mon.kill_all
+  end
+
   it "has a target number of processes" do
     @mon.num_processes.should == 5
   end
@@ -14,20 +18,20 @@ describe "Code::Monitor" do
   end
 
   it "starts a new process with an environment" do
-    pid = @mon.start("bin/backend", {PORT: 5100})
+    pid = @mon.start("bin/monitor", {"PORT" => "5100"})
     @mon.processes.should == [pid]
   end
 
   it "generates an environment" do
-    @mon.generate_env.should == {PORT: an_instance_of(Fixnum)}
+    @mon.generate_env.keys.should == ["PORT"]
   end
 
   it "polls running processes" do
-    @mon.poll("bin/backend") == []
+    @mon.poll("bin/monitor") == []
   end
 
-  it "starts backends to satisfy num_backends" do
-    @mon.start_all("bin/backend")
+  it "starts monitors to satisfy num_monitors" do
+    @mon.start_all("bin/monitor")
     @mon.processes.length.should == 5
   end
 

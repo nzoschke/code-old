@@ -8,13 +8,17 @@ module Code
     end
 
     def start(cmd, env={})
-      pid = (5000..6000).to_a.sample
+      pid = spawn(cmd, env)
       @processes << pid
       pid
     end
 
     def start_all(cmd)
       (num_processes - poll(cmd).length).times { start(cmd, generate_env) }
+    end
+
+    def kill_all
+      processes.each { |pid| kill pid }
     end
 
     def poll(cmd)
@@ -25,7 +29,17 @@ module Code
     end
 
     def generate_env
-      {PORT: (5000..6000).to_a.sample}
+      {"PORT" => (5000..6000).to_a.sample.to_s}
+    end
+
+    def spawn(cmd, env={})
+      puts env.inspect
+      Process.spawn(env, cmd)
+    end
+
+    def kill(pid)
+      Process.kill("TERM", pid)
+      Process.wait(pid)
     end
   end
 end
