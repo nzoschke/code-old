@@ -17,6 +17,9 @@ module Code
       processes
     end
 
+    def gc
+    end
+
     def generate_env
       {PORT: (5000..6000).to_a.sample}
     end
