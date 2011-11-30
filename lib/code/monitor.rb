@@ -1,10 +1,10 @@
 module Code
   class Monitor
-    def initialize
-    end
+    attr_reader :num_processes, :processes
 
-    def num_processes
-      ENV["NUM_PROCESSES"] || 5
+    def initialize
+      @num_processes = ENV["NUM_PROCESSES"] || 5
+      @processes = []
     end
   end
 end
