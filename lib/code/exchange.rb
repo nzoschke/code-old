@@ -26,6 +26,7 @@ module Code
 
     def dequeue(key, opts={})
       opts.reverse_merge!(timeout: 1)
+
       k, v = redis.blpop(key, opts[:timeout])
       YAML.load(v) if v
     end
