@@ -13,6 +13,10 @@ module Code
       pid
     end
 
+    def start_all(cmd)
+      (num_processes - poll(cmd).length).times { start(cmd, generate_env) }
+    end
+
     def poll(cmd)
       processes
     end

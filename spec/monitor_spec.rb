@@ -27,11 +27,8 @@ describe "Code::Monitor" do
   end
 
   it "starts backends to satisfy num_backends" do
-    @mon.should_receive(:poll).with("bin/backend").and_return([])
-    @mon.should_receive(:start).with("bin/backend", any).times(5)
-
-    @mon.start_all
-    @mon.process.length.should == 5
+    @mon.start_all("bin/backend")
+    @mon.processes.length.should == 5
   end
 
   it "garbage collects stuff" do
