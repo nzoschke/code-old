@@ -6,6 +6,7 @@ gem "unicorn"
 
 group :development do
   gem "sqlite3"
+  gem "rake"
 end
 
 group :test do
