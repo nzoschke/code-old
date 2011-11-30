@@ -13,6 +13,10 @@ module Code
       pid
     end
 
+    def poll(cmd)
+      processes
+    end
+
     def generate_env
       {PORT: (5000..6000).to_a.sample}
     end
