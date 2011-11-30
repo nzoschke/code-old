@@ -1,4 +1,5 @@
 require "./lib/code/exchange"
+require "./lib/code/web"
 
 class Hash
   def reverse_merge!(h)
