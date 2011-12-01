@@ -1,0 +1,25 @@
+---
+process_types:
+  rake: bundle exec rake
+  console: bundle exec irb
+  web: "bundle exec unicorn -c unicorn.conf.rb -p $PORT "
+release_descr:
+head: e085e106177681e954b4119bdf98b2a7792ef4e6
+stack: cedar
+slug_size: 40095744
+config_vars:
+  PATH: bin:vendor/bundle/ruby/1.9.1/bin:/usr/local/bin:/usr/bin:/bin
+  LANG: en_US.UTF-8
+  RACK_ENV: production
+  GEM_PATH: vendor/bundle/ruby/1.9.1
+language_pack: Ruby/Rack
+slug_version:
+run_deploy_hooks: false
+git_log: ""
+current_seq:
+prev_head:
+slug_put_key:
+repo_size: 21643264
+user:
+buildpack: Ruby/Rack
+addons: []

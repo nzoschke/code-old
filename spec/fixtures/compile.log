@@ -1,0 +1,5 @@
+-----> Heroku receiving push
+-----> Ruby/Rack app detected
+-----> Compiled slug size is 4K
+-----> Launching... done, v3
+       http://code.herokuapp.com deployed to Heroku

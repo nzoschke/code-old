@@ -25,7 +25,15 @@ describe "Code::Models::Push" do
     end
 
     it "has an API for saving push data" do
-      post "/pushes"
+      fixtures_dir = File.expand_path(File.join(__FILE__, "..", "fixtures"))
+
+      post "/pushes",
+        "foo"     => "bar",
+        "compile" => Rack::Test::UploadedFile.new("#{fixtures_dir}/compile.log",  "text/plain"),
+        "debug"   => Rack::Test::UploadedFile.new("#{fixtures_dir}/debug.log",    "text/plain"),
+        "detect"  => Rack::Test::UploadedFile.new("#{fixtures_dir}/detect.log",   "text/plain"),
+        "release" => Rack::Test::UploadedFile.new("#{fixtures_dir}/release.log",  "text/plain")
+
       last_response.status.should == 200
     end
   end

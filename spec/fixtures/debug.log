@@ -1,0 +1,19 @@
+++ pwd
++ GIT_DIR=/app/.git
+++ dirname /app/.git
++ WORK_DIR=/app
++ read oldrev newrev ref
++ cd /app
++ git --work-tree=/app checkout -f 23310f8153b4a79d1ef2b9d32f953013bb531155
+Note: checking out '23310f8153b4a79d1ef2b9d32f953013bb531155'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b new_branch_name
+
+HEAD is now at 23310f8... refactor web apps into Web module; extract helpers
