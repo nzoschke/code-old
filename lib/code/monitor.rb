@@ -1,17 +1,27 @@
 module Code
   class Monitor
-    attr_reader :cmd, :num_processes, :processes
+    attr_reader :cmd, :num_processes, :processes, :threads
 
     def initialize(cmd)
       @cmd = cmd
-      @num_processes = ENV["NUM_PROCESSES"].to_i rescue 1
+      @num_processes = (ENV["NUM_PROCESSES"] || 1).to_i
       @processes = []
+      @threads = []
+    end
+
+    def run!
+      begin
+        loop do
+          start_all
+          sleep 10
+        end
+      rescue SystemExit, Interrupt, SignalException => e
+        kill_all
+      end
     end
 
     def start(env={})
-      pid = Process.spawn(env, cmd)
-      @processes << pid
-      pid
+      spawn(cmd, env)
     end
 
     def start_all
@@ -20,7 +30,8 @@ module Code
     end
 
     def kill_all
-      processes.each { |pid| kill pid }
+      processes.each { |p| kill p }
+      threads.each   { |t| t.join }
     end
 
     def poll
@@ -35,9 +46,17 @@ module Code
       {"PORT" => (5000..6000).to_a.sample.to_s}
     end
 
+    def spawn(cmd, env={})
+      pid = Process.spawn(env, cmd)
+      t   = Process.detach(pid)
+      @processes  << pid
+      @threads    << t
+      pid
+    end
+
     def kill(pid)
       Process.kill("TERM", pid)
-      Process.wait(pid)
+      Process.wait(pid) rescue nil
     end
   end
 end
