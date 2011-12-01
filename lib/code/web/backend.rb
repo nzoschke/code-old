@@ -20,7 +20,7 @@ module Code
       end
 
       def self.monitor_exchange
-        ex = Exchange.new
+        ex = Exchange.new # TODO: use Helpers
         begin
           puts "DEQUEING..."
           data = ex.dequeue("backend.cedar", timeout: 10)
