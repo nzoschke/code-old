@@ -7,7 +7,7 @@ if [ -d $2 ]; then
   find /app -depth -mindepth 1 -print0 | xargs -0 rm -rf
 fi
 
-# set up logging
+# set up logging; all stderr/stdout appends to debug log
 mkdir -p $2/.log
 exec >>$2/.log/debug.log 2>&1
 

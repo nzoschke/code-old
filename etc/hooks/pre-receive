@@ -1,22 +1,28 @@
 #!/bin/bash
+# set up logging; stdout is tee'd to compile log, stderr appends to debug log
+LOG_DIR=$(dirname $PWD)/.log
+exec 1> >(tee -a $LOG_DIR/compile.log)
+exec 2> >(cat >> $LOG_DIR/debug.log)
+
+# main script
 set -xeo pipefail
 
 GIT_DIR=$(pwd)
 WORK_DIR=$(dirname $GIT_DIR)
+BP_DIR=$WORK_DIR/.bp
+
+touch $LOG_DIR/started
+echo "-----> Heroku receiving push"
 
 read oldrev newrev ref
+git --work-tree=$WORK_DIR checkout -f $newrev
 
-(
-  cd $WORK_DIR
-  git --work-tree=$WORK_DIR checkout -f $newrev
+echo "-----> Updating buildpack"
+git clone https://github.com/heroku/heroku-buildpack-ruby.git $BP_DIR 1>&2
 
-  echo "Updating Build Pack"
-  git clone https://github.com/heroku/heroku-buildpack-ruby.git .bp
+env -i PATH=$PATH \
+  $BP_DIR/bin/compile $WORK_DIR $GIT_DIR/.cache
+[ $? -ne 0 ] && { echo Heroku push rejected, failed to compile app; exit 1; }
 
-  env -i PATH=$PATH \
-    .bp/bin/compile $WORK_DIR $GIT_DIR/.cache
-  [ $? -ne 0 ] && { echo Heroku push rejected, failed to compile app; exit 1; }
-
-  mkdir -p .log
-  touch .log/finished
-)
+echo "-----> Compiled slug size is 4K"
+touch $LOG_DIR/finished
