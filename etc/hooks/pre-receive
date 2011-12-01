@@ -34,14 +34,5 @@ else
   echo "-----> Compiled slug size is 628K"
 fi
 
-# POST artifacts
-curl \
-  -F "buildpack_url=$BP_URL"          \
-  -F "detect=@$LOG_DIR/detect.log"    \
-  -F "compile=@$LOG_DIR/compile.log"  \
-  -F "release=@$LOG_DIR/release.log"  \
-  -F "debug=@$LOG_DIR/debug.log"      \
-  -F "exit_status=$STATUS"            \
-  "http://localhost:5000/pushes"
-
-touch $LOG_DIR/finished
+echo $STATUS > $LOG_DIR/finished
+exit $STATUS
