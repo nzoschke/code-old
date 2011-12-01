@@ -4,15 +4,16 @@
 # assert WORK_DIR does not exist. Special case /app, which can safely be cleaned
 if [ -d $2 ]; then
   [ $2 != "/app" ] && { echo error: $2 already exists; exit 1; }
-  LOG=$(find $2 -depth -mindepth 1 -print0 | xargs -0 rm -rfv)
+  find /app -depth -mindepth 1 -print0 | xargs -0 rm -rf
 fi
 
-# set up debug logging
+# set up logging
 mkdir -p $2/.log
-exec &> $2/.log/debug.log
-echo "+ rm $LOG"
+exec >>$2/.log/debug.log 2>&1
 
+# main script
 set -xeo pipefail
+echo Started at $(date)
 
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 APP_DIR=$(dirname $BIN_DIR)
@@ -29,6 +30,6 @@ WORK_DIR=$2
 
   rm -rf $REPO_DIR/hooks
   cp -R $APP_DIR/etc/hooks .git
-
-  echo Finished at $(date)
 )
+
+echo Finished at $(date)
