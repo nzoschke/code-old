@@ -10,6 +10,7 @@ set -xo pipefail
 GIT_DIR=$(pwd)
 WORK_DIR=$(dirname $GIT_DIR)
 BP_DIR=$WORK_DIR/.bp
+BP_URL=https://github.com/heroku/heroku-buildpack-ruby.git
 
 touch $LOG_DIR/started
 echo "-----> Heroku receiving push"
@@ -18,7 +19,7 @@ read oldrev newrev ref
 git --work-tree=$WORK_DIR checkout -f $newrev
 
 echo "-----> Updating buildpack..."
-git clone https://github.com/heroku/heroku-buildpack-ruby.git $BP_DIR 1>&2
+git clone $BP_URL $BP_DIR 1>&2
 
 # run detect / compile / release in a clean environment
 _env() { env -i PATH=$PATH "$@"; }
@@ -34,5 +35,13 @@ else
 fi
 
 # POST artifacts
+curl \
+  -F "buildpack_url=$BP_URL"          \
+  -F "detect=@$LOG_DIR/detect.log"    \
+  -F "compile=@$LOG_DIR/compile.log"  \
+  -F "release=@$LOG_DIR/release.log"  \
+  -F "debug=@$LOG_DIR/debug.log"      \
+  -F "exit_status=$STATUS"            \
+  "http://localhost:5000/pushes"
 
 touch $LOG_DIR/finished
