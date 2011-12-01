@@ -10,7 +10,7 @@ WORK_DIR=$2
 (
   cd $WORK_DIR
   find . -depth -mindepth 1 | xargs rm -rfv
-  git init .
+  git init --bare .git
 
   STATUS=$(curl -o repo.tgz -w "%{http_code}" "$REPO_URL")
   [ $STATUS == "200" ] && tar xfvz repo.tgz -C .git
