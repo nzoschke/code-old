@@ -4,3 +4,5 @@ ENV["REDIS_URL"]    = "redis://localhost:6379"
 
 require "rack/test"
 require "./lib/code"
+
+Sequel.extension :migration

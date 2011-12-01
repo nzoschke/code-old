@@ -1,11 +1,13 @@
 require "./spec/spec_helper"
 
-describe "Code::Models::Push" do
-  before(:each) { Code.reload_models }
+describe Code::Models::Push do
+  before(:each) { Sequel::Migrator.apply(Sequel::DATABASES[0], "db/migrations") }
   after(:each)  { Sequel::DATABASES[0].disconnect }
 
+  include Code::Models
+
   it "has a data model for metadata and logs for a push operation" do
-    p = Code::Models::Push.new
+    p = Push.new
     p.columns.should == [
       :id,
       :app_id, :app_name, :user_email,

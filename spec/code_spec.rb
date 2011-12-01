@@ -1,4 +1,4 @@
-require "./lib/code"
+require "./spec/spec_helper"
 
 describe "Ruby" do
   it "patches Hash with reverse_merge!" do

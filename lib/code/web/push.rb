@@ -8,7 +8,7 @@ module Code
       helpers Helpers
 
       post "/" do
-        "ok"
+        Push.inspect
       end
     end
   end
