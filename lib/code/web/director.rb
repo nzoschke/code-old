@@ -2,7 +2,7 @@ require "sinatra"
 
 module Code
   module Web
-    class Web < Sinatra::Application
+    class Director < Sinatra::Application
       helpers Helpers
 
       get "/:app_name.git/info/refs" do

@@ -1,6 +1,6 @@
 require "./spec/spec_helper"
 
-describe "Code::Web::Web" do
+describe "Code::Web::Director" do
   include Rack::Test::Methods
   include Code::Web::Helpers
 
@@ -11,7 +11,7 @@ describe "Code::Web::Web" do
 
   def app
     Rack::Builder.new do
-      map("/") { run Code::Web::Web }
+      map("/") { run Code::Web::Director }
     end
   end
 
