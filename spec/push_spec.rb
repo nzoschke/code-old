@@ -16,12 +16,12 @@ describe "Code::Models::Push" do
     ]
   end
 
-  context "Code::Web::Push API" do
+  context Code::Web::PushAPI do
     include Rack::Test::Methods
 
     def app
       Rack::Builder.new do
-        map("/pushes") { run Code::Web::Push }
+        map("/pushes") { run Code::Web::PushAPI }
       end
     end
 
