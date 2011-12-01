@@ -27,14 +27,10 @@ describe "Code::Monitor" do
   end
 
   it "polls running processes" do
-    @mon.start_all
-    @mon.poll.length.should == 5
-
+    @mon.start_all.length.should == 5
     @mon.kill(@mon.processes.first)
     @mon.poll.length.should == 4
-
-    @mon.start_all
-    @mon.poll.length.should == 5
+    @mon.start_all.length.should == 5
   end
 
   it "starts monitors to satisfy num_monitors" do
