@@ -1,6 +1,3 @@
-#!/bin/bash
-set -x
-
-while true; do
-  sleep 30
-done
+#!/usr/bin/env ruby
+require "./lib/code"
+Code::Monitor.new("bin/backend").run!
