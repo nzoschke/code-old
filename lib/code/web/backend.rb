@@ -2,7 +2,6 @@ require "sinatra"
 require "./lib/code"
 require "./lib/git_http"
 
-$root_dir = File.expand_path(File.join(__FILE__, "..", "..", ".."))
 $work_dir = "/app"
 
 module Code
