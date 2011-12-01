@@ -1,3 +1,3 @@
 require "./lib/code"
 
-map("/") { run Code::Backend }
+map("/") { run Code::Web::Backend }
