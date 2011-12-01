@@ -1,4 +1,5 @@
 require "sinatra"
+require "yaml"
 require "./lib/code/models"
 
 module Code
@@ -8,7 +9,25 @@ module Code
       helpers Helpers
 
       post "/" do
-        Push.inspect
+        release = YAML.load_file params[:release][:tempfile]
+
+        Push.create( 
+          app_id:         params[:app_id],
+          app_name:       params[:app_name],
+          user_email:     params[:user_email],
+          heroku_host:    params[:heroku_host],
+
+          stack:          release["stack"],
+          framework:      release["buildpack"],
+
+          buildpack_url:  params[:buildpack_url],
+          detect:         params[:detect][:tempfile].read,
+          compile:        params[:compile][:tempfile].read,
+          release:        params[:release][:tempfile].read,
+          debug:          params[:debug][:tempfile].read,
+          exit_status:    params[:exit_status]
+        )
+        "ok"
       end
     end
   end
