@@ -2,7 +2,7 @@ require "./spec/spec_helper"
 
 describe Code::Web do
   include Rack::Test::Methods
-  include Code::Helpers
+  include Code::Web::Helpers
 
   before do
     @ex = mock("exchange")
@@ -11,7 +11,7 @@ describe Code::Web do
 
   def app
     Rack::Builder.new do
-      map("/") { run Code::Web }
+      map("/") { run Code::Web::Web }
     end
   end
 
