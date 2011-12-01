@@ -14,4 +14,19 @@ describe "Code::Models::Push" do
       :started_at, :finished_at
     ]
   end
+
+  context "Code::Web::Push API" do
+    include Rack::Test::Methods
+
+    def app
+      Rack::Builder.new do
+        map("/pushes") { run Code::Web::Push }
+      end
+    end
+
+    it "has an API for saving push data" do
+      post "/pushes"
+      last_response.status.should == 200
+    end
+  end
 end
