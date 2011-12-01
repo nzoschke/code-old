@@ -6,16 +6,17 @@ APP_DIR=$(dirname $BIN_DIR)
 
 REPO_URL=$1
 WORK_DIR=$2
-REPO_DIR=$WORK_DIR/.git
 
 (
   cd $WORK_DIR
-  find . -mindepth 1 | xargs rm -rfv
-  mkdir -p .git
+  find . -depth -mindepth 1 | xargs rm -rfv
+  git init .
 
   STATUS=$(curl -o repo.tgz -w "%{http_code}" "$REPO_URL")
-  [ $STATUS == "200" ] && tar xfvz repo.tgz || git init .
+  [ $STATUS == "200" ] && tar xfvz repo.tgz -C .git
 
   rm -rf $REPO_DIR/hooks
-  cp -R $APP_DIR/etc/hooks $REPO_DIR
+  cp -R $APP_DIR/etc/hooks .git
 )
+
+echo Finished at $(date) >&2
