@@ -12,7 +12,7 @@ WORK_DIR=$2
   find . -depth -mindepth 1 | xargs rm -rfv
   git init --bare .git
 
-  STATUS=$(curl -o repo.tgz -w "%{http_code}" "$REPO_URL")
+  STATUS=$(curl -o repo.tgz -w "%{http_code}" "$REPO_URL" || true)
   [ $STATUS == "200" ] && tar xfvz repo.tgz -C .git
 
   rm -rf $REPO_DIR/hooks
