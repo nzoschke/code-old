@@ -1,20 +1,21 @@
 module Code
   class Monitor
-    attr_reader :num_processes, :processes
+    attr_reader :cmd, :num_processes, :processes
 
-    def initialize
+    def initialize(cmd)
+      @cmd = cmd
       @num_processes = ENV["NUM_PROCESSES"] || 5
       @processes = []
     end
 
-    def start(cmd, env={})
-      pid = spawn(cmd, env)
+    def start(env={})
+      pid = Process.spawn(env, cmd)
       @processes << pid
       pid
     end
 
-    def start_all(cmd)
-      (num_processes - poll.length).times { start(cmd, generate_env) }
+    def start_all
+      (num_processes - poll.length).times { start(generate_env) }
       processes
     end
 
@@ -32,10 +33,6 @@ module Code
 
     def generate_env
       {"PORT" => (5000..6000).to_a.sample.to_s}
-    end
-
-    def spawn(cmd, env={})
-      Process.spawn(env, cmd)
     end
 
     def kill(pid)

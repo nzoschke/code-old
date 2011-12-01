@@ -2,7 +2,7 @@ require "./spec/spec_helper"
 
 describe "Code::Monitor" do
   before do
-    @mon = Code::Monitor.new
+    @mon = Code::Monitor.new("sleep 10")
   end
 
   after do
@@ -18,7 +18,7 @@ describe "Code::Monitor" do
   end
 
   it "starts a new process with an environment" do
-    pid = @mon.start("sleep 10", {"PORT" => "5100"})
+    pid = @mon.start({"PORT" => "5100"})
     @mon.processes.should == [pid]
   end
 
@@ -27,18 +27,18 @@ describe "Code::Monitor" do
   end
 
   it "polls running processes" do
-    @mon.start_all("sleep 10")
+    @mon.start_all
     @mon.poll.length.should == 5
 
     @mon.kill(@mon.processes.first)
     @mon.poll.length.should == 4
 
-    @mon.start_all("sleep 10")
+    @mon.start_all
     @mon.poll.length.should == 5
   end
 
   it "starts monitors to satisfy num_monitors" do
-    @mon.start_all("sleep 10")
+    @mon.start_all
     @mon.processes.length.should == 5
   end
 
