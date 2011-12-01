@@ -21,20 +21,13 @@ echo "-----> Updating buildpack..."
 git clone https://github.com/heroku/heroku-buildpack-ruby.git $BP_DIR 1>&2
 
 # run detect / compile / release in a clean environment
-env -i PATH=$PATH \
-  BP_DIR=$BP_DIR GIT_DIR=$GIT_DIR LOG_DIR=$LOG_DIR WORK_DIR=$WORK_DIR \
-  bash -s <<'EOF'
-    set -x
-    echo "-----> $($BP_DIR/bin/detect $WORK_DIR) app detected"
+_env() { env -i PATH=$PATH "$@"; }
+echo "-----> $(_env $BP_DIR/bin/detect $WORK_DIR) app detected"
+_env $BP_DIR/bin/compile $WORK_DIR $GIT_DIR/.cache ; STATUS=$?
+_env $BP_DIR/bin/detect  $WORK_DIR &> $LOG_DIR/detect.log
+_env $BP_DIR/bin/release $WORK_DIR &> $LOG_DIR/release.log
 
-    $BP_DIR/bin/compile $WORK_DIR $GIT_DIR/.cache ; STATUS=$?
-    $BP_DIR/bin/detect  $WORK_DIR &> $LOG_DIR/detect.log
-    $BP_DIR/bin/release $WORK_DIR &> $LOG_DIR/release.log
-
-    exit $STATUS
-EOF
-
-if [ $? != 0 ]; then
+if [ $STATUS != 0 ]; then
   echo "!     Heroku push rejected"
 else
   echo "-----> Compiled slug size is 628K"
