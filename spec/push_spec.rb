@@ -30,10 +30,10 @@ describe "Code::Models::Push" do
 
       post "/pushes",
         "foo"     => "bar",
-        "compile" => Rack::Test::UploadedFile.new("#{fixtures_dir}/compile.log",  "text/plain"),
-        "debug"   => Rack::Test::UploadedFile.new("#{fixtures_dir}/debug.log",    "text/plain"),
         "detect"  => Rack::Test::UploadedFile.new("#{fixtures_dir}/detect.log",   "text/plain"),
-        "release" => Rack::Test::UploadedFile.new("#{fixtures_dir}/release.log",  "text/plain")
+        "compile" => Rack::Test::UploadedFile.new("#{fixtures_dir}/compile.log",  "text/plain"),
+        "release" => Rack::Test::UploadedFile.new("#{fixtures_dir}/release.log",  "text/plain"),
+        "debug"   => Rack::Test::UploadedFile.new("#{fixtures_dir}/debug.log",    "text/plain")
 
       last_response.status.should == 200
     end
