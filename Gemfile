@@ -1,6 +1,7 @@
 source :rubygems
 
 gem "redis"
+gem "sequel"
 gem "sinatra"
 gem "unicorn"
 
