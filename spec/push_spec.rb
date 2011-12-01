@@ -10,7 +10,8 @@ describe "Code::Models::Push" do
       :id,
       :app_id, :app_name, :user_email,
       :stack, :flags, :heroku_host,
-      :buildpack_url, :framework, :compile, :release, :debug_log, :exit_status,
+      :buildpack_url, :framework,
+      :detect, :compile, :release, :debug, :exit_status,
       :started_at, :finished_at
     ]
   end

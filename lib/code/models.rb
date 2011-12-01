@@ -18,10 +18,11 @@ module Code
         String    :heroku_host
 
         String    :buildpack_url
-        String    :framework      # output of `detect`
+        String    :framework
+        String    :detect         # output of `detect`
         String    :compile        # output of `compile`
         String    :release        # output of `release`
-        String    :debug_log      # stderr or debug statements from slug-compiler, and detect/compile/release
+        String    :debug          # stderr or debug statements from slug-compiler, and detect/compile/release
         Integer   :exit_status    # $? of `compile`
 
         DateTime  :started_at
