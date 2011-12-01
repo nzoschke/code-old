@@ -10,3 +10,14 @@ class Hash
     replace(h.merge(self))
   end
 end
+
+module Code
+  def self.require_models
+    require "./lib/code/models"
+  end
+
+  def self.reload_models
+    require_models
+    load "./lib/code/models.rb"
+  end
+end
