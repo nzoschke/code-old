@@ -28,6 +28,13 @@ module Code
       puts `bin/unstow-repo "#{data[:repo_get_url]}" #{$work_dir}`
 
       ex.reply(data)
+
+      begin
+        puts "MONITORING..."
+        flag = File.exists? "#{$work_dir}/.log/finished"
+        sleep 5
+      end while !flag
+      Process.kill("TERM", $$)
     end
   end
 end
