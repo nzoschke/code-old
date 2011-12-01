@@ -1,3 +1,19 @@
 #!/bin/bash
+set -xeo pipefail
 
-echo "HELLO WORLD"
+GIT_DIR=$(pwd)
+WORK_DIR=$(dirname $GIT_DIR)
+BP_DIR=$GIT_DIR/.buildpack
+
+read oldrev newrev ref
+git --work-tree=$WORK_DIR checkout -f $newrev
+
+echo "Updating Build Pack"
+git clone https://github.com/heroku/heroku-buildpack-ruby.git $BP_DIR
+
+(
+  cd $WORK_DIR
+  env -i PATH=$PATH \
+    $BP_DIR/bin/compile $WORK_DIR $GIT_DIR/.cache
+  [ $? -ne 0 ] && { echo Heroku push rejected, failed to compile app; exit 1; }
+)
