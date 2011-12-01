@@ -4,7 +4,7 @@ worker_processes(1)
 Thread.new do
   begin
     require "./lib/code"
-    Code::Backend.monitor_exchange
+    Code::Web::Backend.monitor_exchange
   rescue => e
     puts e.message
     puts e.backtrace

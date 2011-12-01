@@ -1,6 +1,6 @@
 require "./spec/spec_helper"
 
-describe Code::Web do
+describe "Code::Web::Web" do
   include Rack::Test::Methods
   include Code::Web::Helpers
 
