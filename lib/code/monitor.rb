@@ -4,7 +4,7 @@ module Code
 
     def initialize(cmd)
       @cmd = cmd
-      @num_processes = ENV["NUM_PROCESSES"] || 5
+      @num_processes = ENV["NUM_PROCESSES"].to_i rescue 1
       @processes = []
     end
 

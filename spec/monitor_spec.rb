@@ -2,6 +2,7 @@ require "./spec/spec_helper"
 
 describe "Code::Monitor" do
   before do
+    ENV["NUM_PROCESSES"] = "5"
     @mon = Code::Monitor.new("sleep 10")
   end
 
