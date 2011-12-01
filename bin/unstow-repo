@@ -1,15 +1,15 @@
 #!/bin/bash
-# usage unstow-repo URL WORK_DIR
+# usage unstow-repo WORK_DIR URL
 
 # assert WORK_DIR does not exist. Special case /app, which can safely be cleaned
-if [ -d $2 ]; then
-  [ $2 != "/app" ] && { echo error: $2 already exists; exit 1; }
+if [ -d $1 ]; then
+  [ $1 != "/app" ] && { echo error: $1 already exists; exit 1; }
   find /app -depth -mindepth 1 -print0 | xargs -0 rm -rf
 fi
 
 # set up logging; all stderr/stdout appends to debug log
-mkdir -p $2/.log
-exec >>$2/.log/debug.log 2>&1
+mkdir -p $1/.log
+exec >>$1/.log/debug.log 2>&1
 
 # main script
 set -xeo pipefail
@@ -18,8 +18,8 @@ echo Started at $(date)
 BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
 APP_DIR=$(dirname $BIN_DIR)
 
-REPO_URL=$1
-WORK_DIR=$2
+WORK_DIR=$1
+REPO_URL=$2
 
 (
   cd $WORK_DIR

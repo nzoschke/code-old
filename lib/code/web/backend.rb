@@ -25,7 +25,7 @@ module Code
           data = ex.dequeue("backend.cedar", timeout: 10)
         end while !data
 
-        puts `bin/unstow-repo "#{data[:repo_get_url]}" #{$work_dir}`
+        puts `bin/unstow-repo #{$work_dir} "#{data[:repo_get_url]}" `
 
         ex.reply(data)
 
