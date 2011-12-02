@@ -15,20 +15,25 @@ module Code
         redirect url, 302
       end
 
-      def auth_creds
-        auth = Rack::Auth::Basic::Request.new(env)
-        auth.provided? && auth.basic? ? auth.credentials : [nil, nil]
+      def auth!
+        response["WWW-Authenticate"] = %(Basic realm="Restricted Area")
+        throw(:halt, [401, "Unauthorized"])
+      end
+
+      def creds
+        auth = Rack::Auth::Basic::Request.new(request.env)
+        auth.provided? && auth.basic? ? auth.credentials : auth!
       end
 
       def heroku
-        RestClient::Resource.new("https://api.heroku.com", user: auth_creds[0], password: auth_creds[1])
+        RestClient::Resource.new("https://api.heroku.com", user: creds[0], password: creds[1])
       end
 
       def new_release!(app_name)
         begin
           JSON.parse heroku["/apps/#{app_name}/releases/new"].get(accept: :json)
         rescue RestClient::Unauthorized => e
-          throw(:halt, [401, "Unauthorized"])
+          auth!
         end
       end
     end

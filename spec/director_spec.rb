@@ -8,7 +8,7 @@ describe "Code::Web::Director" do
     @ex = mock("exchange")
     Code::Exchange.stub!(:new).and_return(@ex)
 
-    release = {
+    metadata = {
       "env"               => {"BUILDPACK_URL" => "https://github.com/heroku/heroku-buildpack-ruby.git"},
       "heroku_log_token"  => "t.8d3d88ea-31e5-47e5-9fac-1748101d05bc",
       "id"                => 1905640,
@@ -20,7 +20,7 @@ describe "Code::Web::Director" do
       "stack"             => "cedar"
     }
     FakeWeb.register_uri(:get, "https://api.heroku.com/apps/code-staging/releases/new", :body => "Unauthorized", :status => ["401", "Unauthorized"])
-    FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging/releases/new", :body => JSON.dump(release), :status => ["200", "OK"])
+    FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging/releases/new", :body => JSON.dump(metadata), :status => ["200", "OK"])
   end
 
   def app
@@ -32,6 +32,7 @@ describe "Code::Web::Director" do
   it "uses basic auth" do
     get "/code-staging.git/info/refs"
     last_response.status.should == 401
+    last_response.headers.should include "WWW-Authenticate"
   end
 
   it "requests info for a repo and redirects to a backend" do
