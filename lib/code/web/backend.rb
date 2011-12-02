@@ -25,7 +25,15 @@ module Code
           data = ex.dequeue("backend.cedar", timeout: 10)
         end while !data
 
-        puts `bin/unstow-repo #{$work_dir} "#{data[:repo_get_url]}" `
+        `bin/unstow-repo #{$work_dir} "#{data[:repo_get_url]}"`
+
+        # write the build env to disk
+        File.open("#{$work_dir}/.log/build_env", "w") do |f|
+          data[:env].merge("PATH" => ENV["PATH"]).each do |k,v|
+            v = v.gsub(/'/, "\\\\'")  # escape any single quotes with backslash
+            f.write("#{k}=$'#{v}'\n") # use bash $'...' ANSI-C quoting
+          end
+        end
 
         ex.reply(data)
 

@@ -6,7 +6,12 @@ module Code
       helpers Helpers
 
       get "/:app_name.git/info/refs" do
-        d = exchange.exchange("backend.cedar", {app_name: params[:app_name]}, name: params[:app_name])
+        d = exchange.exchange("backend.cedar", {
+          app_name: params[:app_name],
+          env: {
+            "BUILDPACK_URL" => "https://github.com/heroku/heroku-buildpack-ruby.git",
+          },
+        }, name: params[:app_name])
         forward! d[:hostname]
       end
 

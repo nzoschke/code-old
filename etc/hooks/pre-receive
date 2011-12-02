@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env -i /bin/bash
 # set up logging; stdout is tee'd to compile log, stderr appends to debug log
 LOG_DIR=$(dirname $PWD)/.log
 exec 1> >(tee -a $LOG_DIR/compile.log)
@@ -6,11 +6,11 @@ exec 2> >(cat >> $LOG_DIR/debug.log)
 
 # main script
 set -xo pipefail
+source $LOG_DIR/build_env
 
 GIT_DIR=$(pwd)
 WORK_DIR=$(dirname $GIT_DIR)
 BP_DIR=$WORK_DIR/.bp
-BP_URL=https://github.com/heroku/heroku-buildpack-ruby.git
 
 touch $LOG_DIR/started
 echo "-----> Heroku receiving push"
@@ -19,7 +19,7 @@ read oldrev newrev ref
 git --work-tree=$WORK_DIR checkout -f $newrev
 
 echo "-----> Updating buildpack..."
-git clone $BP_URL $BP_DIR 1>&2
+git clone $BUILDPACK_URL $BP_DIR 1>&2
 
 # run detect / compile / release in a clean environment
 _env() { env -i PATH=$PATH "$@"; }
