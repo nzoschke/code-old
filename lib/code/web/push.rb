@@ -8,6 +8,13 @@ module Code
       include Code::Models
       helpers Helpers
 
+      set :views, File.join(APP_DIR, "views")
+
+      get "/" do
+        @pushes = Push.order(:created_at.desc).limit(100)
+        erb :pushes
+      end
+
       post "/" do
         release = YAML.load_file params[:release][:tempfile]
 
