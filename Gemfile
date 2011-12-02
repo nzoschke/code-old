@@ -1,6 +1,7 @@
 source :rubygems
 
 gem "redis"
+gem "rest-client"
 gem "sequel"
 gem "sinatra"
 gem "unicorn"
@@ -11,6 +12,7 @@ group :development do
 end
 
 group :test do
+  gem "fakeweb"
   gem "rack-test"
   gem "rspec"
   gem "ruby-redis"

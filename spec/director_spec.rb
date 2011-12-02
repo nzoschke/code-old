@@ -7,6 +7,20 @@ describe "Code::Web::Director" do
   before do
     @ex = mock("exchange")
     Code::Exchange.stub!(:new).and_return(@ex)
+
+    release = {
+      "env"               => {"BUILDPACK_URL" => "https://github.com/heroku/heroku-buildpack-ruby.git"},
+      "heroku_log_token"  => "t.8d3d88ea-31e5-47e5-9fac-1748101d05bc",
+      "id"                => 1905640,
+      "repo_get_url"      => "http://s3-external-1.amazonaws.com/heroku_repos/staging.herokudev.com/1905640.tgz",
+      "repo_put_url"      => "http://s3-external-1.amazonaws.com/heroku_repos/staging.herokudev.com/1905640.tgz",
+      "release_url"       => "https://SECRET_KEY@api.staging.herokudev.com/apps/code/1905640",
+      "slug_put_url"      => "http://s3-external-1.amazonaws.com/herokuslugs/staging.herokudev.com/HASH",
+      "user_email"        => "noah@heroku.com",
+      "stack"             => "cedar"
+    }
+    FakeWeb.register_uri(:get, "https://api.heroku.com/apps/code-staging/releases/new", :body => "Unauthorized", :status => ["401", "Unauthorized"])
+    FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging/releases/new", :body => JSON.dump(release), :status => ["200", "OK"])
   end
 
   def app
@@ -15,7 +29,14 @@ describe "Code::Web::Director" do
     end
   end
 
+  it "uses basic auth" do
+    get "/code-staging.git/info/refs"
+    last_response.status.should == 401
+  end
+
   it "requests info for a repo and redirects to a backend" do
+    authorize("", "API_TOKEN")
+
     @ex.should_receive(:hostname).and_return("code.heroku.com")
     @ex.should_receive(:exchange).with("backend.cedar", hash_including(app_name: "code-staging"), {:name => "code-staging"}).and_return(hostname: "route.heroku.com:3333")
 
