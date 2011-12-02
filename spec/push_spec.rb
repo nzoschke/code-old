@@ -14,8 +14,18 @@ describe Code::Models::Push do
       :stack, :flags, :heroku_host,
       :buildpack_url, :framework,
       :detect, :compile, :release, :debug, :exit_status,
-      :started_at, :finished_at
+      :started_at, :finished_at,
+      :created_at, :updated_at
     ]
+  end
+
+  it "sets a created/updated timestamps on save" do
+    p = Push.create
+    p.created_at.should_not == nil
+    p.updated_at.should == nil
+
+    p.save
+    p.updated_at.should_not == nil
   end
 
   context Code::Web::PushAPI do
