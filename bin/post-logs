@@ -1,0 +1,17 @@
+#!/bin/bash
+
+APP_DIR=$1
+API_URL=$2
+LOG_DIR=$APP_DIR/.log
+
+source $LOG_DIR/build_env
+STATUS=$(cat $LOG_DIR/finished)
+
+curl \
+  -F "buildpack_url=$BUILDPACK_URL"   \
+  -F "detect=@$LOG_DIR/detect.log"    \
+  -F "compile=@$LOG_DIR/compile.log"  \
+  -F "release=@$LOG_DIR/release.log"  \
+  -F "debug=@$LOG_DIR/debug.log"      \
+  -F "exit_status=$STATUS"            \
+  "$API_URL"

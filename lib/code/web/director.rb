@@ -8,6 +8,7 @@ module Code
       get "/:app_name.git/info/refs" do
         d = exchange.exchange("backend.cedar", {
           app_name: params[:app_name],
+          push_api_url: "http://#{exchange.hostname}/pushes",
           env: {
             "BUILDPACK_URL" => "https://github.com/heroku/heroku-buildpack-ruby.git",
           },

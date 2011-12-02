@@ -42,6 +42,9 @@ module Code
           flag = File.exists? "#{$work_dir}/.log/finished"
           sleep 5
         end while !flag
+
+        `bin/post-logs #{$work_dir} "#{data[:push_api_url]}"`
+  
         Process.kill("TERM", $$)
       end
     end
