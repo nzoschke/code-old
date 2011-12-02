@@ -18,6 +18,9 @@
         <td><%= push.exit_status %></td>
         <td><%= push.created_at %></td>
       </tr>
+      <tr>
+        <td colspan="5"><pre><%= push.compile %></pre></td>
+      </tr>
     <% end %>
   </tbody>
 </table>
