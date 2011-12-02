@@ -5,6 +5,8 @@ module Code
     class Director < Sinatra::Application
       helpers Helpers
 
+      set :public_folder, File.join(APP_DIR, "public")
+
       get "/:app_name.git/info/refs" do
         d = exchange.exchange("backend.cedar", {
           app_name: params[:app_name],
