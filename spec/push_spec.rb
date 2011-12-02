@@ -6,9 +6,10 @@ describe Code::Models::Push do
 
   include Code::Models
 
+  before { @p = Push.create }
+
   it "has a data model for metadata and logs for a push operation" do
-    p = Push.new
-    p.columns.should == [
+    @p.columns.should == [
       :id,
       :app_id, :app_name, :user_email,
       :stack, :flags, :heroku_host,
@@ -20,12 +21,15 @@ describe Code::Models::Push do
   end
 
   it "sets a created/updated timestamps on save" do
-    p = Push.create
-    p.created_at.should_not == nil
-    p.updated_at.should == nil
+    @p.created_at.should_not == nil
+    @p.updated_at.should == nil
 
-    p.save
-    p.updated_at.should_not == nil
+    @p.save
+    @p.updated_at.should_not == nil
+  end
+
+  it "serializes to json" do
+    @p.to_json.should =~ /Code::Models::Push/
   end
 
   context Code::Web::PushAPI do
@@ -54,7 +58,7 @@ describe Code::Models::Push do
 
       last_response.status.should == 200
 
-      p = Push[1]
+      p = Push.last
       p.app_id.should       == 31337
       p.app_name.should     == "code"
       p.stack.should        == "cedar"
