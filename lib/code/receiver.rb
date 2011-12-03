@@ -12,8 +12,7 @@ module Code
         monitor_queue
         unstow_repo
         reply_exchange
-        monitor_git
-        stow_repo
+        monitor_git && stow_repo
         self_destruct
       end
 
@@ -49,10 +48,20 @@ module Code
       end
 
       def monitor_git
+        started = Time.now
         loop do
-          flag = File.exists? "#{WORK_DIR}/.tmp/exit"
-          Log.log(monitor_git: true, empty: !!flag.to_s)
-          flag ? break : sleep(5)
+          age = Time.now - started
+          info_start      = File.exists? "#{WORK_DIR}/.tmp/info_start"
+          rpc_start       = File.exists? "#{WORK_DIR}/.tmp/rpc_start"
+          rpc_exit        = File.exists? "#{WORK_DIR}/.tmp/rpc_exit"
+          compile_start   = File.exists? "#{WORK_DIR}/.tmp/start"
+          compile_exit    = File.exists? "#{WORK_DIR}/.tmp/exit"
+
+          Log.log(monitor_git: true, age: age, info_start: info_start.to_s, rpc_start: rpc_start.to_s, compile_start: compile_start.to_s, compile_exit: compile_exit.to_s, rpc_exit: rpc_exit.to_s)
+
+          return true  if compile_exit
+          return false if !rpc_start && age > 30
+          sleep 5
         end
       end
 
