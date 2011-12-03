@@ -1,0 +1,24 @@
+#!/bin/bash
+# usage stow-repo WORK_DIR URL
+
+# set up logging; all stderr/stdout appends to debug log
+TMP_DIR=$1/.tmp
+exec >>$TMP_DIR/debug.log 2>&1
+
+# main script
+set -xeo pipefail
+echo Started at $(date)
+
+BIN_DIR=$(cd $(dirname $0); pwd) # absolute path
+APP_DIR=$(dirname $BIN_DIR)
+
+WORK_DIR=$1
+REPO_URL=$2
+
+(
+  cd $WORK_DIR
+  tar cfvz repo.tgz -C .git .
+  curl -v -T repo.tgz "$REPO_URL" >> $TMP_DIR/debug.log
+)
+
+echo Finished at $(date)

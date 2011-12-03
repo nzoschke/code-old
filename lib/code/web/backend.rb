@@ -45,6 +45,7 @@ module Code
           sleep 5
         end while !flag
 
+        `bin/stow-repo #{$work_dir} "#{data[:metadata]["repo_put_url"]}"`
         `bin/post-logs #{$work_dir} "#{data[:push_api_url]}"`
   
         Process.kill("TERM", $$)
