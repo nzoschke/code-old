@@ -23,9 +23,9 @@ git clone $BUILDPACK_URL $BP_DIR 1>&2
 
 # run detect / compile / release in a clean environment
 _env() { env -i PATH=$PATH "$@"; }
-echo "-----> $(_env $BP_DIR/bin/detect $WORK_DIR) app detected"
+DETECT=$(_env $BP_DIR/bin/detect $WORK_DIR | tee $TMP_DIR/detect.log)
+echo "-----> $DETECT app detected"
 _env $BP_DIR/bin/compile $WORK_DIR $GIT_DIR/.cache ; STATUS=$?
-_env $BP_DIR/bin/detect  $WORK_DIR > $TMP_DIR/detect.log
 _env $BP_DIR/bin/release $WORK_DIR > $TMP_DIR/release.log
 
 if [ $STATUS != 0 ]; then
@@ -36,6 +36,32 @@ else
     echo -e ".git/\n.tmp/" > exclude
     mksquashfs $WORK_DIR slug.img -all-root -ef exclude -noappend 1>&2
     echo "-----> Compiled slug size is $(du -h slug.img | cut -f1)"
+
+    # prepare release json
+    ruby <<'EOF'
+    require "json"
+    require "yaml"
+    m = YAML.load_file "metadata.yml"
+    r = YAML.load_file "release.log"
+    File.open("release.json", "w") do |f|
+      f.write({
+        "head"          => `git rev-parse head`.strip,
+        "release_descr" => "Deploy slug from code.heroku.com",
+        "slug_put_key"  => m["slug_put_key"],
+        "slug_version"  => 2,
+        "stack"         => "cedar",
+        "user"          => "noah@heroku.com"
+      }.merge(r).to_json)
+    end
+EOF
+
+    # PUT slug and POST release
+    echo -n "-----> Launching..."
+    curl -v -T slug.img "$(grep slug_put_url metadata.yml | cut -d' ' -f2)" >> debug.log
+    VERSION=$(curl -v -H "Content-Type: application/json" -X POST -d @release.json "$(grep release_url metadata.yml | cut -d' ' -f2)")
+    echo " done, $VERSION"
+    echo "       $(grep '^url:' metadata.yml | cut -d' ' -f2) deployed to Heroku"
+    
   )
 fi
 
