@@ -58,7 +58,7 @@ describe "Log" do
     STDOUT.should_receive(:puts).with("err at=start")
     STDOUT.should_receive(:puts).with(/err at=exception reraise class=RuntimeError message=wtf exception_id=.* elapsed=0.000/)
     Log.instrument(Test, :err)
-    Test.new.err rescue nil
+    proc { Test.new.err }.should raise_error
   end
 
   it "merges hashes" do

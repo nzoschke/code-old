@@ -37,7 +37,7 @@ module Log
         begin
           ret = super(*args)
         rescue StandardError, Timeout::Error => e
-          Log.log data.merge(at: :exception, reraise: true, class: e.class, message: e.message, exception_id: e.object_id.abs, elapsed: Time.now - start)
+          Log.log(data, {at: :exception, reraise: true, class: e.class, message: e.message, exception_id: e.object_id.abs, elapsed: Time.now - start})
           raise e
         end
         Log.log(data, {:at => :finish, elapsed: Time.now - start})
