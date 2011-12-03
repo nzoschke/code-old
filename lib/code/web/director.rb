@@ -19,6 +19,8 @@ module Code
       end
 
       post "/:app_name.git/git-receive-pack" do
+        core_auth!(params[:app_name])
+
         d = exchange.get(params[:app_name])
         forward! d[:hostname]
       end

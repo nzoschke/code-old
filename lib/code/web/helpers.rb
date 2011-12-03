@@ -29,6 +29,14 @@ module Code
         RestClient::Resource.new("https://api.heroku.com", user: creds[0], password: creds[1])
       end
 
+      def core_auth!(app_name)
+        begin
+          heroku["/apps/#{app_name}"]
+        rescue RestClient::Unauthorized => e
+          auth!
+        end
+      end
+
       def new_release!(app_name)
         begin
           JSON.parse heroku["/apps/#{app_name}/releases/new"].get(accept: :json)
