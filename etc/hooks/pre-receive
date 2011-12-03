@@ -34,5 +34,5 @@ else
   echo "-----> Compiled slug size is 628K"
 fi
 
-echo $STATUS > $LOG_DIR/finished
+echo $STATUS > $LOG_DIR/exit
 exit $STATUS

@@ -41,7 +41,7 @@ module Code
 
         begin
           puts "MONITORING..."
-          flag = File.exists? "#{$work_dir}/.log/finished"
+          flag = File.exists? "#{$work_dir}/.log/exit"
           sleep 5
         end while !flag
 

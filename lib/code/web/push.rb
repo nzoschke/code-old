@@ -32,7 +32,7 @@ module Code
           compile:        params[:compile][:tempfile].read,
           release:        params[:release][:tempfile].read,
           debug:          params[:debug][:tempfile].read,
-          exit_status:    params[:exit_status][:tempfile].read
+          exit:           params[:exit][:tempfile].read
         )
         "ok"
       end

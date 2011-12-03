@@ -14,7 +14,7 @@ describe Code::Models::Push do
       :app_id, :app_name, :user_email,
       :stack, :flags, :heroku_host,
       :buildpack_url, :framework,
-      :detect, :compile, :release, :debug, :exit_status,
+      :detect, :compile, :release, :debug, :exit,
       :started_at, :finished_at,
       :created_at, :updated_at
     ]
@@ -50,19 +50,19 @@ describe Code::Models::Push do
         compile:      Rack::Test::UploadedFile.new("#{fixtures_dir}/compile.log",   "text/plain"),
         release:      Rack::Test::UploadedFile.new("#{fixtures_dir}/release.log",   "text/plain"),
         debug:        Rack::Test::UploadedFile.new("#{fixtures_dir}/debug.log",     "text/plain"),
-        exit_status:  Rack::Test::UploadedFile.new("#{fixtures_dir}/exit",          "text/plain")
+        exit:         Rack::Test::UploadedFile.new("#{fixtures_dir}/exit",          "text/plain")
 
       last_response.status.should == 200
 
       p = Push.last
-      p.app_id.should       == 1905640
-      p.app_name.should     == "code-staging"
-      p.stack.should        == "cedar"
-      p.detect.should       == "Ruby/Rack"
-      p.compile.should      =~ /Heroku receiving push/
-      p.release.should      =~ /process_types/
-      p.debug.should        =~ /GIT_DIR/
-      p.exit_status.should  == 0
+      p.app_id.should   == 1905640
+      p.app_name.should == "code-staging"
+      p.stack.should    == "cedar"
+      p.detect.should   == "Ruby/Rack"
+      p.compile.should  =~ /Heroku receiving push/
+      p.release.should  =~ /process_types/
+      p.debug.should    =~ /GIT_DIR/
+      p.exit.should     == 0
     end
   end
 end
