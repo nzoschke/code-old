@@ -46,7 +46,7 @@ module Code
 
         d = enqueue(key, data)
         r = dequeue(d[:exchange_key], opts)
-        raise ReplyError.new("No reply on #{d[:exchange_key]} in #{opts[:timeout]}") unless r
+        raise ReplyError.new("No reply on #{d[:exchange_key]} within #{opts[:timeout]}s") unless r
         set(opts[:name], r) if opts[:name]
         r
       end
