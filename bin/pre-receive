@@ -55,11 +55,12 @@ else
 EOF
 
     # PUT slug and POST release
+    _ex() { grep "^$1:" metadata.yml | cut -d" " -f2; }
     echo -n "-----> Launching..."
     curl -v -T slug.img "$(grep slug_put_url metadata.yml | cut -d' ' -f2)" >> debug.log
-    VERSION=$(curl -v -H "Content-Type: application/json" -X POST -d @release.json "$(grep release_url metadata.yml | cut -d' ' -f2)")
+    VERSION=$(curl -v -H "Content-Type: application/json" -X POST -d @release.json "$(_ex release_url)")
     echo " done, $VERSION"
-    echo "       http://$(grep '^url:' metadata.yml | cut -d' ' -f2) deployed to Heroku"
+    echo "       http://$(_ex url) deployed to Heroku"
     
   )
 fi
