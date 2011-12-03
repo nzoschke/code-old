@@ -80,6 +80,7 @@ class GitHttp
       if has_access(service_name)
         cmd = git_command("#{service_name} --stateless-rpc --advertise-refs .")
         refs = `#{cmd}`
+        Log.log(git_http: true, refs: refs)
 
         @res = Rack::Response.new
         @res.status = 200
