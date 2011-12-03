@@ -5,6 +5,8 @@ require "yaml"
 
 module Code
   class Exchange
+    class ReplyError < RuntimeError; end;
+
     instrumentable do
       def initialize
       end
@@ -44,7 +46,7 @@ module Code
 
         d = enqueue(key, data)
         r = dequeue(d[:exchange_key], opts)
-        raise RuntimeError.new("no backend") unless r
+        raise ReplyError.new("No reply on #{d[:exchange_key]} in #{opts[:timeout]}") unless r
         set(opts[:name], r) if opts[:name]
         r
       end

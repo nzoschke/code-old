@@ -36,6 +36,10 @@ describe "Code::Exchange" do
     @logs.should include "dequeue hostname=localhost: key=backend.cedar at=start"
   end
 
+  it "raises an exception if exchange failed" do
+    proc { @ex.exchange("backend.cedar", {app_name: "noah"}, name: "noah", timeout: 1) }.should raise_error(Code::Exchange::ReplyError)
+  end
+
   it "enqueues a message and gets a reply on a unique exchange key" do
     @ex.stub!(:generate_key).and_return("ex.abc123")
     @ex.stub!(:hostname).and_return("route.heroku.com:3117")
