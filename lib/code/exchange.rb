@@ -73,6 +73,7 @@ module Code
 
     Log.instrument(self, :enqueue,  eval: "{hostname: hostname, key: args[0]}")
     Log.instrument(self, :dequeue,  eval: "{hostname: hostname, key: args[0]}")
+    Log.instrument(self, :reply,    eval: "{hostname: hostname, key: args[0]}")
     Log.instrument(self, :exchange, eval: "{hostname: hostname, key: args[0]}")
   end
 end

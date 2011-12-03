@@ -10,11 +10,15 @@ module Code
       get "/:app_name.git/info/refs" do
         metadata = new_release!(params[:app_name])
 
+        # find a lively receiver
         d = exchange.exchange("backend.cedar", {
           app_name:     params[:app_name],
           push_api_url: "http://#{exchange.hostname}/pushes",
           metadata:     metadata,
-        }, name: params[:app_name], timeout: 30)
+        }, name: params[:app_name], timeout: 10)
+
+        # block for receiver to unstow
+        exchange.exchange(d[:exchange_key], {}, timeout: 120)
         forward! d[:hostname]
       end
 

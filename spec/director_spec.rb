@@ -42,8 +42,9 @@ describe "Code::Web::Director" do
     @ex.should_receive(:exchange).with(
       "backend.cedar",
       hash_including(app_name: "code-staging"),
-      {:name => "code-staging", timeout: 30}
-    ).and_return(hostname: "route.heroku.com:3333")
+      {:name => "code-staging", timeout: 10}
+    ).and_return(hostname: "route.heroku.com:3333", exchange_key: "ex.abc123")
+    @ex.should_receive(:exchange).with("ex.abc123", {}, {timeout: 120})
 
     get "/code-staging.git/info/refs"
     last_response.status.should == 302
