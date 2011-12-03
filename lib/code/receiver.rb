@@ -19,7 +19,13 @@ module Code
 
       def monitor_queue
         begin
-          @data = exchange.dequeue("backend.cedar", timeout: 10)
+          if d = exchange.dequeue("backend.cedar", timeout: 10)
+            age = Time.now - d[:created_at]
+            @data = d if age < 10
+            Log.log(monitor_queue: true, empty: "false", exchange_key: d[:exchange_key], age: age)
+          else
+            Log.log(monitor_queue: true, empty: "true")
+          end
         end while !@data
         exchange.reply(data)
       end
@@ -39,13 +45,13 @@ module Code
 
       def reply_exchange
         d = exchange.dequeue(data[:exchange_key], timeout: 10)
-        exchange.reply(d)
+        d ? exchange.reply(d) : self_destruct # if frontend disappeared, destroy repo
       end
 
       def monitor_git
         loop do
           flag = File.exists? "#{WORK_DIR}/.tmp/exit"
-          Log.log(monitor_git: true, empty: !flag.to_s)
+          Log.log(monitor_git: true, empty: !!flag.to_s)
           flag ? break : sleep(5)
         end
       end
