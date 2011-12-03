@@ -26,7 +26,7 @@ module Code
           data = ex.dequeue("backend.cedar", timeout: 10)
         end while !data
 
-        `bin/unstow-repo #{$work_dir} "#{data[:repo_get_url]}"`
+        `bin/unstow-repo #{$work_dir} "#{data[:metadata]["repo_get_url"]}"`
 
         # persist metadata and env to the disk
         File.open("#{$work_dir}/.tmp/metadata.yml", "w") { |f| f.write YAML.dump data[:metadata] }

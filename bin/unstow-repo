@@ -9,8 +9,8 @@ fi
 
 # set up logging; all stderr/stdout appends to debug log
 TMP_DIR=$1/.tmp
-mkdir -p $TMP_DIR/.tmp
-exec >>$TMP_DIR/.tmp/debug.log 2>&1
+mkdir -p $TMP_DIR
+exec >>$TMP_DIR/debug.log 2>&1
 
 # main script
 set -xeo pipefail
@@ -26,8 +26,8 @@ REPO_URL=$2
   cd $WORK_DIR
   git init --bare .git
 
-  STATUS=$(curl -o repo.tgz -w "%{http_code}" "$REPO_URL" || true)
-  [ $STATUS == "200" ] && tar xfvz repo.tgz -C .git
+  STATUS=$(curl -v -o repo.tgz -w "%{http_code}" "$REPO_URL" || true)
+  [ $STATUS == "200" ] && tar xfvz repo.tgz -C .git && rm repo.tgz
 
   rm .git/hooks/*
   cp $BIN_DIR/pre-receive .git/hooks/

@@ -39,7 +39,11 @@ describe "Code::Web::Director" do
     authorize("", "API_TOKEN")
 
     @ex.should_receive(:hostname).and_return("code.heroku.com")
-    @ex.should_receive(:exchange).with("backend.cedar", hash_including(app_name: "code-staging"), {:name => "code-staging"}).and_return(hostname: "route.heroku.com:3333")
+    @ex.should_receive(:exchange).with(
+      "backend.cedar",
+      hash_including(app_name: "code-staging"),
+      {:name => "code-staging", timeout: 30}
+    ).and_return(hostname: "route.heroku.com:3333")
 
     get "/code-staging.git/info/refs"
     last_response.status.should == 302

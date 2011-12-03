@@ -14,7 +14,7 @@ module Code
           app_name:     params[:app_name],
           push_api_url: "http://#{exchange.hostname}/pushes",
           metadata:     metadata,
-        }, name: params[:app_name])
+        }, name: params[:app_name], timeout: 30)
         forward! d[:hostname]
       end
 
