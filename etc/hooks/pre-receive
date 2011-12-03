@@ -25,8 +25,8 @@ git clone $BUILDPACK_URL $BP_DIR 1>&2
 _env() { env -i PATH=$PATH "$@"; }
 echo "-----> $(_env $BP_DIR/bin/detect $WORK_DIR) app detected"
 _env $BP_DIR/bin/compile $WORK_DIR $GIT_DIR/.cache ; STATUS=$?
-_env $BP_DIR/bin/detect  $WORK_DIR &> $LOG_DIR/detect.log
-_env $BP_DIR/bin/release $WORK_DIR &> $LOG_DIR/release.log
+_env $BP_DIR/bin/detect  $WORK_DIR > $LOG_DIR/detect.log
+_env $BP_DIR/bin/release $WORK_DIR > $LOG_DIR/release.log
 
 if [ $STATUS != 0 ]; then
   echo "!     Heroku push rejected"
