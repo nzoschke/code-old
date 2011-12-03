@@ -71,11 +71,9 @@ module Code
       end
     end
 
-    Log.instrument(self, :connect)
-    Log.instrument(self, :enqueue)
-    Log.instrument(self, :dequeue)
-    Log.instrument(self, :exchange)
+    Log.instrument(self, :enqueue,  eval: "{hostname: hostname, key: args[0]}")
+    Log.instrument(self, :dequeue,  eval: "{hostname: hostname, key: args[0]}")
+    Log.instrument(self, :exchange, eval: "{hostname: hostname, key: args[0]}")
   end
-
 end
 

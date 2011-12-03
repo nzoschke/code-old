@@ -31,14 +31,14 @@ describe "Code::Exchange" do
     Thread.new { _ex.reply _ex.dequeue("backend.cedar") }
     @ex.exchange("backend.cedar", {app_name: "noah"}, name: "noah")
 
-    @logs.should include "exchange at=start"
-    @logs.should include "enqueue at=start"
-    @logs.should include "dequeue at=start"
+    @logs.should include "exchange hostname=localhost: key=backend.cedar at=start"
+    @logs.should include "enqueue hostname=localhost: key=backend.cedar at=start"
+    @logs.should include "dequeue hostname=localhost: key=backend.cedar at=start"
   end
 
   it "enqueues a message and gets a reply on a unique exchange key" do
-    @ex.should_receive(:generate_key).and_return("ex.abc123")
-    @ex.should_receive(:hostname).and_return("route.heroku.com:3117")
+    @ex.stub!(:generate_key).and_return("ex.abc123")
+    @ex.stub!(:hostname).and_return("route.heroku.com:3117")
 
     @ex.enqueue("backend.cedar", {app_name: "noah"})  # director
     @ex.reply(@ex.dequeue("backend.cedar"))           # backend
