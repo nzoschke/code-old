@@ -5,6 +5,7 @@ require "./lib/log"
 require "./lib/code/exchange"
 require "./lib/code/models"
 require "./lib/code/monitor"
+require "./lib/code/receiver"
 require "./lib/code/web"
 
 class Hash
