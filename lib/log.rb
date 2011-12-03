@@ -12,9 +12,12 @@ module Log
 
   def log(*datas)
     data = merge(*datas)
-    msg  = unparse data
+    write(unparse data)
+  end
+
+  def write(log)
     mtx.synchronize do
-      STDOUT.puts msg
+      STDOUT.puts log
     end
   end
 
