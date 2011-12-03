@@ -9,6 +9,10 @@ class Test
     def connect(url, opts={})
       puts "connecting to #{url} with #{opts.inspect}"
     end
+
+    def err
+      raise RuntimeError.new("wtf")
+    end
   end
 end
 
@@ -48,6 +52,13 @@ describe "Log" do
     STDOUT.should_receive(:puts).with("connect test at=finish elapsed=0.000")
     Log.instrument(Test, :connect, test: true, eval: "{port: @port}")
     Test.new.connect("redis://localhost:6379", retry: true)
+  end
+
+  it "instruments and reraises exceptions" do
+    STDOUT.should_receive(:puts).with("err at=start")
+    STDOUT.should_receive(:puts).with(/err at=exception reraise class=RuntimeError message=wtf exception_id=.* elapsed=0.000/)
+    Log.instrument(Test, :err)
+    Test.new.err rescue nil
   end
 
   it "merges hashes" do
