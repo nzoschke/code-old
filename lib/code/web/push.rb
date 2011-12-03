@@ -16,23 +16,23 @@ module Code
       end
 
       post "/" do
-        release = YAML.load_file params[:release][:tempfile]
+        metadata = YAML.load_file params[:metadata][:tempfile]
+        app_name, host = metadata["url"].split(".", 2)
 
         Push.create( 
-          app_id:         params[:app_id],
-          app_name:       params[:app_name],
-          user_email:     params[:user_email],
-          heroku_host:    params[:heroku_host],
+          app_id:         metadata["id"],
+          app_name:       app_name,
+          user_email:     metadata["user_email"].to_s,
+          heroku_host:    host,
 
-          stack:          release["stack"],
-          framework:      release["buildpack"],
+          stack:          metadata["stack"],
+          buildpack_url:  metadata["env"]["BUILDPACK_URL"],
 
-          buildpack_url:  params[:buildpack_url],
           detect:         params[:detect][:tempfile].read,
           compile:        params[:compile][:tempfile].read,
           release:        params[:release][:tempfile].read,
           debug:          params[:debug][:tempfile].read,
-          exit_status:    params[:exit_status]
+          exit_status:    params[:exit_status][:tempfile].read
         )
         "ok"
       end

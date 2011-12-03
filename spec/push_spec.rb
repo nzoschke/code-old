@@ -45,24 +45,19 @@ describe Code::Models::Push do
       fixtures_dir = File.expand_path(File.join(__FILE__, "..", "fixtures"))
 
       post "/pushes",
-        app_id:         31337,
-        app_name:       "code",
-        user_email:     "noah@heroku.com",
-        heroku_host:    "heroku.com",
-        buildpack_url:  "https://github.com/heroku/heroku-buildpack-ruby.git",
-        detect:         Rack::Test::UploadedFile.new("#{fixtures_dir}/detect.log",   "text/plain"),
-        compile:        Rack::Test::UploadedFile.new("#{fixtures_dir}/compile.log",  "text/plain"),
-        release:        Rack::Test::UploadedFile.new("#{fixtures_dir}/release.log",  "text/plain"),
-        debug:          Rack::Test::UploadedFile.new("#{fixtures_dir}/debug.log",    "text/plain"),
-        exit_status:    0
+        metadata:     Rack::Test::UploadedFile.new("#{fixtures_dir}/metadata.yml",  "text/plain"),
+        detect:       Rack::Test::UploadedFile.new("#{fixtures_dir}/detect.log",    "text/plain"),
+        compile:      Rack::Test::UploadedFile.new("#{fixtures_dir}/compile.log",   "text/plain"),
+        release:      Rack::Test::UploadedFile.new("#{fixtures_dir}/release.log",   "text/plain"),
+        debug:        Rack::Test::UploadedFile.new("#{fixtures_dir}/debug.log",     "text/plain"),
+        exit_status:  Rack::Test::UploadedFile.new("#{fixtures_dir}/exit",          "text/plain")
 
       last_response.status.should == 200
 
       p = Push.last
-      p.app_id.should       == 31337
-      p.app_name.should     == "code"
+      p.app_id.should       == 1905640
+      p.app_name.should     == "code-staging"
       p.stack.should        == "cedar"
-      p.framework.should    == "Ruby/Rack"
       p.detect.should       == "Ruby/Rack"
       p.compile.should      =~ /Heroku receiving push/
       p.release.should      =~ /process_types/
