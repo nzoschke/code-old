@@ -10,5 +10,5 @@ curl \
   -F "compile=@$TMP_DIR/compile.log"    \
   -F "release=@$TMP_DIR/release.log"    \
   -F "debug=@$TMP_DIR/debug.log"        \
-  -F "exit=$TMP_DIR/exit"               \
+  -F "exit=@$TMP_DIR/exit"              \
   "$API_URL"
