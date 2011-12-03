@@ -67,23 +67,23 @@ end
 
 class Test
   loggable do
-    def connect
-      puts "connecting"
+    def connect(url, opts={})
+      puts "connecting to #{url} with #{opts.inspect}"
     end
   end
 end
 
 describe "Log" do
   it "doesnt log normally" do
-    STDOUT.should_receive(:puts).with("connecting")
-    Test.new.connect
+    STDOUT.should_receive(:puts).with("connecting to redis://localhost:6379 with {:retry=>true}")
+    Test.new.connect("redis://localhost:6379", retry: true)
   end
 
   it "logs around a method" do
     STDOUT.should_receive(:puts).with("connect at=start")
-    STDOUT.should_receive(:puts).with("connecting")
+    STDOUT.should_receive(:puts).with("connecting to redis://localhost:6379 with {:retry=>true}")
     STDOUT.should_receive(:puts).with("connect at=finish elapsed=0.000")
     Log.around(Test, :connect)
-    Test.new.connect
+    Test.new.connect("redis://localhost:6379", retry: true)
   end
 end
