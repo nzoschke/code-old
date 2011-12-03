@@ -29,8 +29,8 @@ module Code
         `bin/unstow-repo #{$work_dir} "#{data[:repo_get_url]}"`
 
         # persist metadata and env to the disk
-        File.open("#{$work_dir}/.log/metadata.yml", "w") { |f| f.write YAML.dump data[:metadata] }
-        File.open("#{$work_dir}/.log/build_env", "w") do |f|
+        File.open("#{$work_dir}/.tmp/metadata.yml", "w") { |f| f.write YAML.dump data[:metadata] }
+        File.open("#{$work_dir}/.tmp/build_env", "w") do |f|
           data[:metadata]["env"].merge("PATH" => ENV["PATH"]).each do |k,v|
             v = v.gsub(/'/, "\\\\'")  # escape any single quotes with backslash
             f.write("#{k}=$'#{v}'\n") # use bash $'...' ANSI-C quoting
@@ -41,7 +41,7 @@ module Code
 
         begin
           puts "MONITORING..."
-          flag = File.exists? "#{$work_dir}/.log/exit"
+          flag = File.exists? "#{$work_dir}/.tmp/exit"
           sleep 5
         end while !flag
 

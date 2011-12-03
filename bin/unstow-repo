@@ -8,8 +8,9 @@ if [ -d $1 ]; then
 fi
 
 # set up logging; all stderr/stdout appends to debug log
-mkdir -p $1/.log
-exec >>$1/.log/debug.log 2>&1
+TMP_DIR=$1/.tmp
+mkdir -p $TMP_DIR/.tmp
+exec >>$TMP_DIR/.tmp/debug.log 2>&1
 
 # main script
 set -xeo pipefail
