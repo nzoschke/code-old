@@ -31,7 +31,12 @@ _env $BP_DIR/bin/release $WORK_DIR > $TMP_DIR/release.log
 if [ $STATUS != 0 ]; then
   echo "!     Heroku push rejected"
 else
-  echo "-----> Compiled slug size is 628K"
+  (
+    cd $TMP_DIR
+    echo -e ".git/\n.tmp/" > exclude
+    mksquashfs $WORK_DIR slug.img -all-root -ef exclude -noappend 1>&2
+    echo "-----> Compiled slug size is $(du -h slug.img | cut -f1)"
+  )
 fi
 
 echo $STATUS > $TMP_DIR/exit
