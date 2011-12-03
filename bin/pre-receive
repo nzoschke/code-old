@@ -50,7 +50,6 @@ else
         "slug_put_key"  => m["slug_put_key"],
         "slug_version"  => 2,
         "stack"         => "cedar",
-        "user"          => "noah@heroku.com"
       }.merge(r).to_json)
     end
 EOF
