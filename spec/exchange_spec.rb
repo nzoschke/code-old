@@ -36,8 +36,9 @@ describe "Code::Exchange" do
     @logs.should include "dequeue hostname=localhost: key=backend.cedar at=start"
   end
 
-  it "raises an exception if exchange failed" do
+  it "raises an exception and deletes job if exchange failed" do
     proc { @ex.exchange("backend.cedar", {app_name: "noah"}, name: "noah", timeout: 1) }.should raise_error(Code::Exchange::ReplyError)
+    @ex.redis.llen("backend.cedar").should == 0
   end
 
   it "enqueues a message and gets a reply on a unique exchange key" do

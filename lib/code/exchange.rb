@@ -46,7 +46,10 @@ module Code
 
         d = enqueue(key, data)
         r = dequeue(d[:exchange_key], opts)
-        raise ReplyError.new("No reply on #{d[:exchange_key]} within #{opts[:timeout]}s") unless r
+        if !r
+          redis.lrem(key, 1, YAML.dump(d))
+          raise ReplyError.new("No reply on #{d[:exchange_key]} within #{opts[:timeout]}s")
+        end
         set(opts[:name], r) if opts[:name]
         r
       end
