@@ -81,6 +81,7 @@ class GitHttp
             @res.write block        # steam it to the client
           end
         end
+        flag("rpc_exit")
       end
     end
 

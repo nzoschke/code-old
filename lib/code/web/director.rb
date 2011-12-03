@@ -32,6 +32,13 @@ module Code
         d = exchange.get(params[:app_name])
         forward! d[:hostname]
       end
+
+      post "/:app_name.git/git-upload-pack" do
+        core_auth!(params[:app_name])
+
+        d = exchange.get(params[:app_name])
+        forward! d[:hostname]
+      end
     end
   end
 end

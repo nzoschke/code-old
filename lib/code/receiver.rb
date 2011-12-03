@@ -59,8 +59,9 @@ module Code
 
           Log.log(monitor_git: true, age: age, info_start: info_start.to_s, rpc_start: rpc_start.to_s, compile_start: compile_start.to_s, compile_exit: compile_exit.to_s, rpc_exit: rpc_exit.to_s)
 
-          return true  if compile_exit
-          return false if !rpc_start && age > 30
+          return true  if rpc_exit && compile_exit  # successful compile, stow repo
+          return false if rpc_exit && !compile_exit # fetch or unsuccessful compile, throw away
+          return false if !rpc_start && age > 30    # noop, throw away
           sleep 5
         end
       end
