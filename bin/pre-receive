@@ -12,7 +12,7 @@ GIT_DIR=$(pwd)
 WORK_DIR=$(dirname $GIT_DIR)
 BP_DIR=$WORK_DIR/.bp
 
-touch $TMP_DIR/started
+touch $TMP_DIR/start
 echo "-----> Heroku receiving push"
 
 read oldrev newrev ref

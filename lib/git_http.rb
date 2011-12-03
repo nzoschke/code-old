@@ -3,6 +3,7 @@ require 'rack/request'
 require 'rack/response'
 require 'rack/utils'
 require 'time'
+require 'fileutils'
 
 class GitHttp
   class App 
@@ -51,6 +52,13 @@ class GitHttp
       end
     end
 
+    def flag(name)
+      # touch a file to flag
+      flag = WORK_DIR + "/.tmp/#{name}"
+      Log.log(git_http: true, flag: true, flag: flag)
+      FileUtils.touch flag
+    end
+
     # ---------------------------------
     # actual command handling functions
     # ---------------------------------
@@ -78,9 +86,10 @@ class GitHttp
       service_name = get_service_type
 
       if has_access(service_name)
+        flag("info_start")
+
         cmd = git_command("#{service_name} --stateless-rpc --advertise-refs .")
         refs = `#{cmd}`
-        Log.log(git_http: true, refs: refs)
 
         @res = Rack::Response.new
         @res.status = 200
