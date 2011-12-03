@@ -65,6 +65,8 @@ class GitHttp
 
     def service_rpc
       return render_no_access if !has_access(@rpc, true)
+      flag("rpc_start")
+
       input = read_body
 
       @res = Rack::Response.new
