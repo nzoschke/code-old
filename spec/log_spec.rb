@@ -22,7 +22,7 @@ module Log
     end
   end
 
-  def around(cls, method, data={})
+  def instrument(cls, method, data={})
     data = {method => true}.merge(data)
     eval = data.delete(:eval) || "{}"
 
@@ -101,24 +101,24 @@ describe "Log" do
     )
   end
 
-  it "doesnt log normally" do
+  it "doesnt log by default" do
     STDOUT.should_receive(:puts).with("connecting to redis://localhost:6379 with {:retry=>true}")
     Test.new.connect("redis://localhost:6379", retry: true)
   end
 
-  it "logs around a method" do
+  it "instruments a method if specified" do
     STDOUT.should_receive(:puts).with("connect at=start")
     STDOUT.should_receive(:puts).with("connecting to redis://localhost:6379 with {:retry=>true}")
     STDOUT.should_receive(:puts).with("connect at=finish elapsed=0.000")
-    Log.around(Test, :connect)
+    Log.instrument(Test, :connect)
     Test.new.connect("redis://localhost:6379", retry: true)
   end
 
-  it "experimentally logs local data from outside with eval" do
+  it "instruments local data with eval" do
     STDOUT.should_receive(:puts).with("connect test port=6379 at=start")
     STDOUT.should_receive(:puts).with("connecting to redis://localhost:6379 with {:retry=>true}")
     STDOUT.should_receive(:puts).with("connect test at=finish elapsed=0.000")
-    Log.around(Test, :connect, test: true, eval: "{port: @port}")
+    Log.instrument(Test, :connect, test: true, eval: "{port: @port}")
     Test.new.connect("redis://localhost:6379", retry: true)
   end
 
