@@ -47,6 +47,8 @@ describe "Code::Web::Director" do
   end
 
   it "posts a pack to a repo and redirects to a backend" do
+    authorize("", "API_TOKEN")
+
     @ex.should_receive(:get).with("code-staging").and_return(hostname: "route.heroku.com:3333")
 
     post "/code-staging.git/git-receive-pack"
