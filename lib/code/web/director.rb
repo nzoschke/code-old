@@ -8,12 +8,12 @@ module Code
       set :public_folder, File.join(APP_DIR, "public")
 
       get "/:app_name.git/info/refs" do
-        release = new_release!(params[:app_name])        
+        metadata = new_release!(params[:app_name])
 
         d = exchange.exchange("backend.cedar", {
           app_name:     params[:app_name],
           push_api_url: "http://#{exchange.hostname}/pushes",
-          release:      release,
+          metadata:     metadata,
         }, name: params[:app_name])
         forward! d[:hostname]
       end
