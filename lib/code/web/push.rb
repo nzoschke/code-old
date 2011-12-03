@@ -17,6 +17,8 @@ module Code
 
       post "/" do
         metadata = YAML.load_file params[:metadata][:tempfile]
+        detect   = params[:detect][:tempfile].read
+
         app_name, host = metadata["url"].split(".", 2)
 
         Push.create( 
@@ -28,7 +30,8 @@ module Code
           stack:          metadata["stack"],
           buildpack_url:  metadata["env"]["BUILDPACK_URL"],
 
-          detect:         params[:detect][:tempfile].read,
+          framework:      detect,
+          detect:         detect,
           compile:        params[:compile][:tempfile].read,
           release:        params[:release][:tempfile].read,
           debug:          params[:debug][:tempfile].read,

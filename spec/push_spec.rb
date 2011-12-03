@@ -55,14 +55,15 @@ describe Code::Models::Push do
       last_response.status.should == 200
 
       p = Push.last
-      p.app_id.should   == 1905640
-      p.app_name.should == "code-staging"
-      p.stack.should    == "cedar"
-      p.detect.should   == "Ruby/Rack"
-      p.compile.should  =~ /Heroku receiving push/
-      p.release.should  =~ /process_types/
-      p.debug.should    =~ /GIT_DIR/
-      p.exit.should     == 0
+      p.app_id.should     == 1905640
+      p.app_name.should   == "code-staging"
+      p.stack.should      == "cedar"
+      p.framework.should  == "Ruby/Rack"
+      p.detect.should     == "Ruby/Rack"
+      p.compile.should    =~ /Heroku receiving push/
+      p.release.should    =~ /process_types/
+      p.debug.should      =~ /GIT_DIR/
+      p.exit.should       == 0
     end
   end
 end
