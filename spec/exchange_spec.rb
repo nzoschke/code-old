@@ -13,6 +13,9 @@ describe "Code::Exchange" do
   end
 
   before do
+    @logs = []
+    Log.stub!(:write).and_return { |log| @logs << log }
+
     @ex = Code::Exchange.new
     @ex.redis.flushdb
   end
@@ -23,16 +26,25 @@ describe "Code::Exchange" do
     @ex.exchange("backend.cedar", {app_name: "noah"}, name: "noah")
   end
 
+  it "logs around exchange" do
+    _ex = Code::Exchange.new
+    Thread.new { _ex.reply _ex.dequeue("backend.cedar") }
+    @ex.exchange("backend.cedar", {app_name: "noah"}, name: "noah")
+
+    @logs.should include "exchange at=start"
+    @logs.should include "enqueue at=start"
+    @logs.should include "dequeue at=start"
+  end
+
   it "enqueues a message and gets a reply on a unique exchange key" do
     @ex.should_receive(:generate_key).and_return("ex.abc123")
     @ex.should_receive(:hostname).and_return("route.heroku.com:3117")
-    Time.should_receive(:now).and_return(0)
 
     @ex.enqueue("backend.cedar", {app_name: "noah"})  # director
     @ex.reply(@ex.dequeue("backend.cedar"))           # backend
     data = @ex.dequeue("ex.abc123")                   # director
 
-    data.should == {app_name: "noah", created_at: 0, hostname: "route.heroku.com:3117", exchange_key: "ex.abc123"}
+    data.should include_hash({app_name: "noah", hostname: "route.heroku.com:3117", exchange_key: "ex.abc123"})
   end
 
   it "communicates over an exchange key" do

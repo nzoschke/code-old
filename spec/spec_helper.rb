@@ -8,3 +8,9 @@ require "./lib/code"
 
 FakeWeb.allow_net_connect = false
 Sequel.extension :migration
+
+RSpec::Matchers.define :include_hash do |expected|
+  match do |actual|
+    actual.select { |k,v| expected.keys.include? k } == expected
+  end
+end
