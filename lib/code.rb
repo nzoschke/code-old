@@ -1,6 +1,7 @@
 ENV["TZ"] = "UTC"
 APP_DIR ||= File.expand_path(File.join(__FILE__, "..", ".."))
 
+require "./lib/log"
 require "./lib/code/exchange"
 require "./lib/code/models"
 require "./lib/code/monitor"
