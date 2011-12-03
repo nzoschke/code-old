@@ -41,11 +41,11 @@ module Code
       end
 
       def monitor_git
-        begin
-          puts "MONITORING..."
+        loop do
           flag = File.exists? "#{WORK_DIR}/.tmp/exit"
-          sleep 5
-        end while !flag
+          Log.log(monitor_git: true, empty: !flag.to_s)
+          flag ? break : sleep(5)
+        end
       end
 
       def stow_repo
@@ -58,11 +58,11 @@ module Code
       end
     end
 
-    Log.instrument(self, :monitor_exchange)
-    Log.instrument(self, :unstow_repo)
-    Log.instrument(self, :reply_exchange)
-    Log.instrument(self, :monitor_git)
-    Log.instrument(self, :stow_repo)
-    Log.instrument(self, :self_destruct)
+    Log.instrument(self, :monitor_exchange, eval: "{hostname: exchange.hostname}")
+    Log.instrument(self, :unstow_repo,      eval: "{hostname: exchange.hostname}")
+    Log.instrument(self, :reply_exchange,   eval: "{hostname: exchange.hostname}")
+    Log.instrument(self, :monitor_git,      eval: "{hostname: exchange.hostname}")
+    Log.instrument(self, :stow_repo,        eval: "{hostname: exchange.hostname}")
+    Log.instrument(self, :self_destruct,    eval: "{hostname: exchange.hostname}")
   end
 end
