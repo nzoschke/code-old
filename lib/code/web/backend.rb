@@ -1,14 +1,12 @@
 require "sinatra"
 require "./lib/git_http"
 
-$work_dir = "/app"
-
 module Code
   module Web
     class Backend < Sinatra::Application
 
       GIT = GitHttp::App.new({
-        :project_root => "#{$work_dir}",
+        :project_root => "#{WORK_DIR}",
         :upload_pack  => true,
         :receive_pack => true,
       })

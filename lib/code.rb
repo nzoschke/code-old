@@ -1,5 +1,6 @@
-ENV["TZ"] = "UTC"
-APP_DIR ||= File.expand_path(File.join(__FILE__, "..", ".."))
+ENV["TZ"]   = "UTC"
+APP_DIR   ||= File.expand_path(File.join(__FILE__, "..", ".."))
+WORK_DIR  ||= "/app"
 
 require "./lib/log"
 require "./lib/code/exchange"
