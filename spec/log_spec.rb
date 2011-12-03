@@ -1,7 +1,7 @@
 require "./spec/spec_helper"
 
 class Test
-  loggable do
+  instrumentable do
     def initialize
       @port = 6379
     end

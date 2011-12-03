@@ -2,7 +2,7 @@ class Module
   # define and include all block methods in an anonymous module
   # allowing Log.instrument to redefine and access via super
   # http://yehudakatz.com/2009/01/18/other-ways-to-wrap-a-method/
-  def loggable(&blk)
+  def instrumentable(&blk)
     include Module.new(&blk)
   end
 end
