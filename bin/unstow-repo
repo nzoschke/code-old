@@ -29,8 +29,8 @@ REPO_URL=$2
   STATUS=$(curl -o repo.tgz -w "%{http_code}" "$REPO_URL" || true)
   [ $STATUS == "200" ] && tar xfvz repo.tgz -C .git
 
-  rm -rf $REPO_DIR/hooks
-  cp -R $APP_DIR/etc/hooks .git
+  rm .git/hooks/*
+  cp $BIN_DIR/pre-receive .git/hooks/
 )
 
 echo Finished at $(date)
