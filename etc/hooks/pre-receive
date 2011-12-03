@@ -60,7 +60,7 @@ EOF
     curl -v -T slug.img "$(grep slug_put_url metadata.yml | cut -d' ' -f2)" >> debug.log
     VERSION=$(curl -v -H "Content-Type: application/json" -X POST -d @release.json "$(grep release_url metadata.yml | cut -d' ' -f2)")
     echo " done, $VERSION"
-    echo "       $(grep '^url:' metadata.yml | cut -d' ' -f2) deployed to Heroku"
+    echo "       http://$(grep '^url:' metadata.yml | cut -d' ' -f2) deployed to Heroku"
     
   )
 fi
