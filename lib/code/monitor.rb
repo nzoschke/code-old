@@ -74,7 +74,7 @@ module Code
 
       def spawn(cmd, env={})
         r = JSON.parse heroku["ps"].post(command: cmd, type: cmd.split("/").last, attached: false, ps_env: env)
-        heroku["routes/attach"].put("url" => URI.escape(env["ROUTE_URL"]), "ps" => r["process"])
+        heroku["routes/attach"].put("url" => URI.escape("tcp://" + env["ROUTE_URL"]), "ps" => r["process"])
         r["upid"]
       end
 
