@@ -1,5 +1,6 @@
 source :rubygems
 
+gem "pg"
 gem "redis"
 gem "rest-client"
 gem "sequel"
