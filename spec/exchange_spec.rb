@@ -52,17 +52,6 @@ describe "Code::Exchange" do
     data.should include_hash({app_name: "noah", hostname: "route.heroku.com:3117", exchange_key: "ex.abc123"})
   end
 
-  it "communicates over an exchange key" do
-    @ex.send("ex.abc123", {app_name: "noah"}) # director
-    data = @ex.receive("ex.abc123")           # backend
-    data.should == {app_name: "noah"}
-  end
-
-  it "fails to communicate if backend did not receive last message" do
-    @ex.send("ex.abc123", {app_name: "noah"})
-    proc { @ex.send("ex.abc123", {app_name: "noah"}) }.should raise_error
-  end
-
   it "maps an app name to a unique exchange key" do
     @ex.set("noah", "ex.abc123")
     @ex.get("noah").should == "ex.abc123"

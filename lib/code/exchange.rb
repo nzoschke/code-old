@@ -54,14 +54,6 @@ module Code
         r
       end
 
-      def send(key, data={})
-        raise RuntimeError unless redis.setnx(key, YAML.dump(data))
-      end
-
-      def receive(key)
-        YAML.load(redis.get(key))
-      end
-
       def set(key, value)
         redis.hset("exchanges", key, YAML.dump(value))
       end
