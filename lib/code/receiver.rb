@@ -72,7 +72,6 @@ module Code
       end
 
       def self_destruct
-        puts `cat #{WORK_DIR}/.tmp/*`
         Process.kill("TERM", $$)
       end
     end
