@@ -1,3 +1,6 @@
 #!/usr/bin/env ruby
 require "./lib/code"
-Code::Monitor.new("bin/backend").run!
+
+cls = Code::Monitor
+cls = Code::HerokuMonitor if ENV["RACK_ENV"] == "production"
+cls.new("bin/backend").run!
