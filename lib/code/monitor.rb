@@ -87,7 +87,7 @@ module Code
 
       def generate_env
         r = JSON.parse heroku["routes"].post({})
-        {"ROUTE_URL" => r["url"]}
+        {"ROUTE_URL" => r["url"].gsub("tcp://", "")}
       end
 
       def gc
