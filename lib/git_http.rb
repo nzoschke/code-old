@@ -53,10 +53,17 @@ class GitHttp
     end
 
     def flag(name)
-      # touch a file to flag
       flag = WORK_DIR + "/.tmp/#{name}"
       Log.log(git_http: true, flag: true, flag: flag)
       FileUtils.touch flag
+    end
+
+    def unflag(name)
+      flag = WORK_DIR + "/.tmp/#{name}"
+      if File.exists? flag
+        Log.log(git_http: true, unflag: true, flag: flag)
+        File.delete flag
+      end
     end
 
     # ---------------------------------
@@ -65,7 +72,8 @@ class GitHttp
 
     def service_rpc
       return render_no_access if !has_access(@rpc, true)
-      flag("rpc_start")
+      flag   "rpc_start"
+      unflag "rpc_exit"
 
       input = read_body
 
@@ -81,7 +89,7 @@ class GitHttp
             @res.write block        # steam it to the client
           end
         end
-        flag("rpc_exit")
+        flag "rpc_exit"
       end
     end
 
