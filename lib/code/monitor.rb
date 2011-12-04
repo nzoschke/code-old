@@ -1,3 +1,7 @@
+require "json"
+require "restclient"
+require "uri"
+
 module Code
   class Monitor
     attr_reader :cmd, :num_processes, :processes, :threads
@@ -58,5 +62,42 @@ module Code
       Process.kill("TERM", pid)
       Process.wait(pid) rescue nil
     end
+  end
+
+  class HerokuMonitor < Monitor
+    instrumentable do
+      def heroku
+        RestClient::Resource.new("https://api.heroku.com", user: ENV["HEROKU_USER"], password: ENV["HEROKU_PASSWORD"])["apps"][ENV["HEROKU_APP"]]
+      end
+
+      def spawn(cmd, env={})
+        r = JSON.parse heroku["ps"].post(command: cmd, type: cmd.split("/").last, attached: false, ps_env: env)
+        heroku["routes/attach"].put("url" => URI.escape(env["ROUTE_URL"]), "ps" => r["process"])
+        r["upid"]
+      end
+
+      def poll
+        r = JSON.parse heroku["ps"].get(accept: :json)
+        upids = r.select { |a| a["command"] == cmd && ["starting", "up"].include?(a["state"]) }.map { |a| a["upid"]}
+        Log.log(poll: true, num: upids.length)
+        upids
+      end
+
+      def generate_env
+        r = JSON.parse heroku["routes"].post({})
+        {"ROUTE_URL" => r["url"]}
+      end
+
+      def gc
+      end
+
+      def kill_all;  end # noops
+      def kill(pid); end
+    end
+
+    Log.instrument(self, :spawn, eval: "{cmd: args[0], env: args[1].inspect}")
+    Log.instrument(self, :poll)
+    Log.instrument(self, :generate_env)
+    Log.instrument(self, :gc)
   end
 end
