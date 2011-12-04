@@ -15,8 +15,10 @@ module Code
 
     def run!
       begin
+        i = 0
         loop do
           start_all
+          gc if (i+=1)%10 == 0
           sleep 10
         end
       rescue SystemExit, Interrupt, SignalException => e
