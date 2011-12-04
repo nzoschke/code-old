@@ -20,7 +20,7 @@ module Code
       end
 
       def hostname
-        "localhost:#{ENV["PORT"]}"
+        ENV["ROUTE_URL"] || "localhost:#{ENV["PORT"]}"
       end
 
       def enqueue(key, data={})
