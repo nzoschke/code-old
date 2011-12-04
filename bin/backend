@@ -4,7 +4,8 @@ set -x
 BIN_DIR=$(cd $(dirname $0); pwd)
 APP_DIR=$(dirname $BIN_DIR)
 
-if [[ $APP_DIR == /app/* ]]; then
+if [ $RACK_ENV == "production" ] && [ $APP_DIR == /app ]; then
+  echo "Relocating /app to /tmp"
   BIN_DIR=/tmp/app/bin
   APP_DIR=/tmp/app
   mv /app /tmp
