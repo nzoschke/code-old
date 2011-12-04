@@ -91,6 +91,16 @@ module Code
       end
 
       def gc
+        ps = JSON.parse heroku["ps"].get(accept: :json)
+        routes = JSON.parse heroku["routes"].get(accept: :json)
+
+        active_processes = ps.select { |ps| ["starting", "up"].include? ps["state"] }.map { |ps| ps["process" ] }
+        orphan_routes = routes.reject { |r| active_processes.include? r["ps"] }
+
+        orphan_routes.each do |route|
+          Log.log(gc: true, delete_route: true, url: route["url"])
+          heroku["routes?url=#{URI.escape(route["url"])}"].delete
+        end
       end
 
       def kill_all;  end # noops
