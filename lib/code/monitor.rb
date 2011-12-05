@@ -74,7 +74,7 @@ module Code
 
       def spawn(cmd, env={})
         r = JSON.parse heroku["ps"].post(command: cmd, type: cmd.split("/").last, attached: false, ps_env: env)
-        heroku["routes/attach"].put("url" => URI.escape("tcp://" + env["ROUTE_URL"]), "ps" => r["process"])
+        heroku["routes/attach"].put("url" => URI.escape("tcp://" + env["HOSTNAME"]), "ps" => r["process"])
         r["upid"]
       end
 
@@ -87,7 +87,7 @@ module Code
 
       def generate_env
         r = JSON.parse heroku["routes"].post({})
-        {"ROUTE_URL" => r["url"].gsub("tcp://", "")}
+        {"HOSTNAME" => r["url"].gsub("tcp://", "")}
       end
 
       def gc
