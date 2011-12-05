@@ -264,6 +264,7 @@ class GitHttp
 
     def git_command(command)
       git_bin = @config[:git_path] || 'git'
+      Log.log(git_http: true, git_command: true, git_bin: `which #{git_bin}`.strip, command: command)
       command = "#{git_bin} #{command}"
       command
     end

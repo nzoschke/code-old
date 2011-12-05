@@ -1,6 +1,9 @@
-ENV["TZ"]   = "UTC"
 APP_DIR   ||= File.expand_path(File.join(__FILE__, "..", ".."))
 WORK_DIR  ||= "/app"
+SYSTEM    ||= `echo $(uname)-$(uname -m)`.strip # Darwin-x86_64, Linux-x86_64, etc.
+
+ENV["PATH"] = "#{APP_DIR}/#{SYSTEM}:#{ENV["PATH"]}" unless ENV["PATH"] =~ /#{SYSTEM}/
+ENV["TZ"]   = "UTC"
 
 require "./lib/log"
 require "./lib/code/exchange"
