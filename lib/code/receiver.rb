@@ -73,6 +73,7 @@ module Code
       end
 
       def self_destruct
+        puts `find #{WORK_DIR}/.tmp | xargs --verbose -n1 cat`
         Process.kill("TERM", $$)
       end
     end
