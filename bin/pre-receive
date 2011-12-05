@@ -34,7 +34,7 @@ else
   (
     cd $TMP_DIR
     echo -e ".git/\n.tmp/" > exclude
-    mksquashfs $WORK_DIR slug.img -all-root -ef exclude -noappend 1>&2
+    mksquashfs $WORK_DIR slug.img -all-root -ef exclude -noappend -no-progress 1>&2
     echo "-----> Compiled slug size is $(du -h slug.img | cut -f1)"
 
     # prepare release json
