@@ -19,7 +19,11 @@
         <td><%= push.created_at %></td>
       </tr>
       <tr>
-        <td colspan="5"><pre><%= push.compile %></pre></td>
+        <td colspan="5">
+          <pre><%= push.compile %></pre>
+          <pre><%= push.release %></pre>
+          <pre><%= push.debug %></pre>
+        </td>
       </tr>
     <% end %>
   </tbody>
