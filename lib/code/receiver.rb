@@ -72,6 +72,7 @@ module Code
       end
 
       def self_destruct
+        puts `cat #{WORK_DIR}/.tmp/*`
         `bin/post-logs #{WORK_DIR} "#{data[:push_api_url]}"`
         Process.kill("TERM", $$)
       end
