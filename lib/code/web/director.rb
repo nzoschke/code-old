@@ -14,7 +14,7 @@ module Code
           # find a lively receiver
           d = exchange.exchange("backend.cedar", {
             app_name:     params[:app_name],
-            push_api_url: "http://#{exchange.hostname}/pushes",
+            push_api_url: "http://code-staging.herokuapp.com/pushes",
             metadata:     metadata,
           }, name: params[:app_name], timeout: 10)
         rescue Code::Exchange::ReplyError => e

@@ -69,11 +69,10 @@ module Code
 
       def stow_repo
         `bin/stow-repo #{WORK_DIR} "#{data[:metadata]["repo_put_url"]}"`
-        `bin/post-logs #{WORK_DIR} "#{data[:push_api_url]}"`
       end
 
       def self_destruct
-        puts `find #{WORK_DIR}/.tmp | xargs --verbose -n1 cat`
+        `bin/post-logs #{WORK_DIR} "#{data[:push_api_url]}"`
         Process.kill("TERM", $$)
       end
     end
