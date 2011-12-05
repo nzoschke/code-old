@@ -27,7 +27,7 @@ REPO_URL=$2
   git init --bare .git
 
   STATUS=$(curl -v -o repo.tgz -w "%{http_code}" "$REPO_URL" || true)
-  [ $STATUS == "200" ] && tar xfvz repo.tgz -C .git && rm repo.tgz
+  [ $STATUS == "200" ] && tar xfz repo.tgz -C .git && rm repo.tgz
 
   rm .git/hooks/*
   cp $BIN_DIR/pre-receive .git/hooks/
