@@ -1,3 +1,6 @@
+STDERR.sync = true
+STDOUT.sync = true
+
 APP_DIR   ||= File.expand_path(File.join(__FILE__, "..", ".."))
 WORK_DIR  ||= "/app"
 SYSTEM    ||= `echo $(uname)-$(uname -m)`.strip # Darwin-x86_64, Linux-x86_64, etc.
