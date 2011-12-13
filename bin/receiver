@@ -1,4 +1,13 @@
 #!/usr/bin/env ruby
-require "./lib/code"
+system <<-EOF
+  if [ "$RACK_ENV" == "production" ] && [ $APP_DIR == /app ]; then
+    echo "Relocating /app to /tmp"
+    BIN_DIR=/tmp/app/bin
+    APP_DIR=/tmp/app
+    mv /app /tmp
+    cd $APP_DIR
+  fi
+EOF
 
+require "./lib/code"
 Code::Receiver.start!
