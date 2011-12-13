@@ -3,4 +3,4 @@ require "./lib/code"
 
 cls = Code::Monitor
 cls = Code::HerokuMonitor if ENV["RACK_ENV"] == "production"
-cls.new("bin/backend").run!
+cls.new("bin/receiver").run!
