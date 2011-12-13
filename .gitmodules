@@ -1,0 +1,3 @@
+[submodule "opt/slug-compiler"]
+	path = opt/slug-compiler
+	url = git@git.herokai.com:slug-compiler.git
