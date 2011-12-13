@@ -8,9 +8,12 @@ module Code
     instrumentable do
       attr_reader :data, :exchange
     
-      def initialize
+      def initialize(data={})
         @exchange = Exchange.new
+        @data = data
+      end
 
+      def start!
         monitor_queue
         unstow_repo
         reply_exchange
@@ -77,6 +80,22 @@ module Code
         `bin/post-logs #{WORK_DIR} "#{data[:push_api_url]}"`
         Process.kill("TERM", $$)
       end
+    end
+
+    def self.start!
+      Thread.new do
+        begin
+          start_monitor!
+        rescue => e
+          puts e.message
+          puts e.backtrace
+        end
+      end
+      start_server!
+    end
+
+    def self.start_monitor!
+      Code::Receiver.new.start!
     end
 
     def self.start_server!

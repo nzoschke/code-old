@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require "./lib/code"
 
-Code::Receiver.start_server!
+Code::Receiver.start!
