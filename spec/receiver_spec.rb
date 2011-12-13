@@ -41,13 +41,13 @@ describe Code::Receiver do
       @logs = []
       Log.stub!(:write).and_return { |log| @logs << log }
 
-      @app_dir = File.expand_path(File.join(__FILE__, "..", "fixtures", "rackapp"))
+      @app_dir = File.expand_path(File.join(__FILE__, "..", "fixtures", "rack"))
       @r = Code::Receiver.new(metadata: Hash.new({}))
       @r.unstow_repo
     end
 
     it "receives a push, compiles a slug, and monitors the compile progress" do
-      ENV["GIT_DIR"] = @app_dir + "/.git"
+      ENV["GIT_DIR"] = @app_dir
       out = `git push http://localhost:5000/rackapp.git 2>&1`
       out.should =~ /Everything up-to-date/
     end
