@@ -83,15 +83,16 @@ module Code
     end
 
     def self.start!
-      Thread.new do
-        begin
-          start_monitor!
-        rescue => e
-          puts e.message
-          puts e.backtrace
-        end
+      pid = fork { start_server! }
+      begin
+        start_monitor!
+      rescue => e
+        puts e.message
+        puts e.backtrace
+      ensure
+        Process.kill("TERM", pid)
+        Process.wait(pid)
       end
-      start_server!
     end
 
     def self.start_monitor!
