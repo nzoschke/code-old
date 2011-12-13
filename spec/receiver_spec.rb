@@ -11,7 +11,10 @@ describe Code::Receiver do
 
   it "starts a unicorn git HTTP server" do
     @s = mock("unicorn http server")
-    Unicorn::HttpServer.should_receive(:new).with(an_instance_of(GitHttp::App), {:listeners=>[]}).and_return(@s)
+    Unicorn::HttpServer.should_receive(:new).with(
+      an_instance_of(GitHttp::App),
+      { listeners: [], timeout: 1800, worker_processes: 1 }
+    ).and_return(@s)
     @s.should_receive(:start).and_return(@s)
     @s.should_receive(:join).and_return(@s)
 

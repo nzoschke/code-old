@@ -108,7 +108,9 @@ module Code
       rackup_opts = Unicorn::Configurator::RACKUP
       rackup_opts[:port] = ENV["PORT"] || 5000
       rackup_opts[:set_listener] = true
-      Unicorn::HttpServer.new(app, rackup_opts[:options]).start.join
+      opts = rackup_opts[:options]
+      opts.reverse_merge!(timeout: 1800, worker_processes: 1)
+      Unicorn::HttpServer.new(app, opts).start.join
     end
 
     Log.instrument(self, :monitor_queue,  eval: "{hostname: exchange.hostname}")
