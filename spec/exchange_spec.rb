@@ -3,7 +3,7 @@ require "./spec/spec_helper"
 describe "Code::Exchange" do
   before(:all) do
     r, w = IO.pipe
-    @redis_pid = Process.spawn("bundle exec ruby-redis", :out => w)
+    @redis_pid = Process.spawn("ruby-redis", :out => w)
     r.readpartial(1024) # block until server flushes logs with pid
   end
 
