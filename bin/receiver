@@ -1,13 +1,10 @@
 #!/usr/bin/env ruby
-system <<-EOF
-  if [ "$RACK_ENV" == "production" ] && [ $APP_DIR == /app ]; then
-    echo "Relocating /app to /tmp"
-    BIN_DIR=/tmp/app/bin
-    APP_DIR=/tmp/app
-    mv /app /tmp
-    cd $APP_DIR
-  fi
-EOF
+app_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+if ENV["RACK_ENV"] == "production" && app_dir == "/app"
+  puts "Relocating /app to /tmp"
+  `mv /app /tmp`
+  Dir.chdir("/tmp/app")
+end
 
 require "./lib/code"
 Code::Receiver.start!
