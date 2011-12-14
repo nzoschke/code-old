@@ -40,6 +40,8 @@ module Code
       def new_release!(app_name)
         begin
           JSON.parse heroku["/apps/#{app_name}/releases/new"].get(accept: :json)
+        rescue RestClient::ResourceNotFound => e
+          throw(:halt, [404, "Not Found"])
         rescue RestClient::Unauthorized => e
           auth!
         end
