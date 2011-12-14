@@ -1,7 +1,5 @@
-require "unicorn"
 require "yaml"
 require "./lib/code"
-require "./lib/git_http"
 
 module Code
   class Receiver
@@ -80,36 +78,6 @@ module Code
         `bin/post-logs #{WORK_DIR} "#{data[:push_api_url]}"`
         Process.kill("TERM", $$)
       end
-    end
-
-    def self.start!
-      pid = Process.fork { start_server! }
-      begin
-        Code::Receiver.new.start!
-      rescue => e
-        puts e.message
-        puts e.backtrace
-      ensure
-        if pid
-          Process.kill("TERM", pid)
-          Process.wait(pid)
-        end
-      end
-    end
-
-    def self.start_server!
-      app = GitHttp::App.new({
-        :project_root => "#{WORK_DIR}",
-        :upload_pack  => true,
-        :receive_pack => true,
-      })
-
-      rackup_opts = Unicorn::Configurator::RACKUP
-      rackup_opts[:port] = ENV["PORT"] || 5000
-      rackup_opts[:set_listener] = true
-      opts = rackup_opts[:options]
-      opts.reverse_merge!(timeout: 1800, worker_processes: 1)
-      Unicorn::HttpServer.new(app, opts).start.join
     end
 
     Log.instrument(self, :monitor_queue,  eval: "{hostname: exchange.hostname}")

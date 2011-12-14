@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require "unicorn"
 require "./lib/code"
 
 app = Rack::Builder.new {

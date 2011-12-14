@@ -1,10 +1,39 @@
 #!/usr/bin/env ruby
-app_dir = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+
+# Heroku cedar hack: clear /app to use as build dir
+app_dir = File.expand_path(__FILE__ + "/../..")
 if ENV["RACK_ENV"] == "production" && app_dir == "/app"
-  puts "Relocating /app to /tmp"
+  puts "Relocating /app to /tmp/app"
   `mv /app /tmp`
   Dir.chdir("/tmp/app")
 end
 
+require "unicorn"
 require "./lib/code"
-Code::Receiver.start!
+require "./lib/git_http"
+
+app = GitHttp::App.new({
+  :project_root => "#{WORK_DIR}",
+  :upload_pack  => true,
+  :receive_pack => true,
+})
+
+opts = {
+  listeners:        "0.0.0.0:#{ENV["PORT"] || 5000}",
+  timeout:          1800,
+  worker_processes: 1
+}
+
+pid = Process.fork { Unicorn::HttpServer.new(app, opts).start.join }
+
+begin
+  Code::Receiver.new.start!
+rescue => e
+  puts e.message
+  puts e.backtrace
+ensure
+  if pid
+    Process.kill("TERM", pid)
+    Process.wait(pid)
+  end
+end
