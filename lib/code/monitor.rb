@@ -83,7 +83,7 @@ module Code
       end
 
       def poll
-        r = JSON.parse heroku["ps"].get(accept: :json)
+        r = JSON.parse heroku["ps"].get
         upids = r.select { |a| a["command"] == cmd && ["starting", "up"].include?(a["state"]) }.map { |a| a["upid"]}
         Log.log(poll: true, num: upids.length)
         upids
