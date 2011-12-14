@@ -30,7 +30,7 @@ module Code
           else
             Log.log(monitor_queue: true, empty: "true")
           end
-        end while !@data
+        end while @data.empty?
         exchange.reply(data)
       end
 
