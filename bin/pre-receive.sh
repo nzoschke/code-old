@@ -1,4 +1,6 @@
 #!/bin/bash
+# Reference implementation of a simple "slug compiler"
+
 # set up logging; stdout is tee'd to compile log, stderr appends to debug log
 TMP_DIR=$(dirname $PWD)/.tmp
 exec 1> >(tee -a $TMP_DIR/compile.log)
