@@ -49,7 +49,7 @@ module Code
       end
 
       def unstow_repo
-        `bin/unstow-repo #{WORK_DIR} "#{data[:metadata]["repo_get_url"]}"`
+        bash "bin/unstow-repo #{WORK_DIR} '#{data[:metadata]["repo_get_url"]}'"
 
         # persist metadata and env to the disk
         File.open("#{WORK_DIR}/.tmp/metadata.yml", "w") { |f| f.write YAML.dump data[:metadata] }
@@ -87,12 +87,16 @@ module Code
       end
 
       def stow_repo
-        `bin/stow-repo #{WORK_DIR} "#{data[:metadata]["repo_put_url"]}"`
+        bash "bin/stow-repo #{WORK_DIR} '#{data[:metadata]["repo_put_url"]}'"
       end
 
       def self_destruct
-        `bin/post-logs #{WORK_DIR} "#{data[:push_api_url]}"`
+        bash "bin/post-logs #{WORK_DIR} '#{data[:push_api_url]}'"
         Process.kill("TERM", $$)
+      end
+
+      def bash(command)
+        `#{command}`
       end
     end
 
@@ -102,5 +106,6 @@ module Code
     Log.instrument(self, :monitor_git,    eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :stow_repo,      eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :self_destruct,  eval: "{hostname: exchange.hostname}")
+    Log.instrument(self, :bash,           eval: "{command:  args[0]}")
   end
 end
