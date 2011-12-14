@@ -71,7 +71,7 @@ module Code
       def heroku
         RestClient::Resource.new("https://api.heroku.com",
           user:     "",
-          password: ENV["HEROKU_PASSWORD"],
+          password: ENV["HEROKU_API_KEY"],
           headers:  { accept: :json }
         )["apps"][ENV["HEROKU_APP"]]
       end
