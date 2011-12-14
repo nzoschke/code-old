@@ -1,6 +1,4 @@
 #!/usr/bin/env ruby
-require "rack"
-require "unicorn"
 require "./lib/code"
 
 app = Rack::Builder.new {
@@ -8,12 +6,11 @@ app = Rack::Builder.new {
   map("/pushes")  { run Code::Web::PushAPI  }
 }
 
-rackup_opts = Unicorn::Configurator::RACKUP
-rackup_opts[:port] = ENV["PORT"] || 5000
-rackup_opts[:set_listener] = true
-opts = rackup_opts[:options]
-opts.reverse_merge!(timeout: 60, worker_processes: 4, before_fork: lambda { |server,worker|
-  Sequel::DATABASES.each { |db| db.disconnect }
-  Sequel.connect(ENV["DATABASE_URL"] || raise("no DATABASE_URL set"))
-})
+opts = {
+  before_fork:      ->(s,w) { Sequel.connect ENV["DATABASE_URL"] },
+  listeners:        "0.0.0.0:#{ENV["PORT"] || 5000}",
+  timeout:          60,
+  worker_processes: 4
+}
+
 Unicorn::HttpServer.new(app, opts).start.join
