@@ -69,7 +69,11 @@ module Code
   class HerokuMonitor < Monitor
     instrumentable do
       def heroku
-        RestClient::Resource.new("https://api.heroku.com", user: ENV["HEROKU_USER"], password: ENV["HEROKU_PASSWORD"])["apps"][ENV["HEROKU_APP"]]
+        RestClient::Resource.new("https://api.heroku.com",
+          user:     ENV["HEROKU_USER"],
+          password: ENV["HEROKU_PASSWORD"],
+          headers:  { accept: :json }
+        )["apps"][ENV["HEROKU_APP"]]
       end
 
       def spawn(cmd, env={})
