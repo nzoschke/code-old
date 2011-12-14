@@ -1,12 +1,13 @@
 require "./spec/spec_helper"
 
 describe Code::Receiver do
-  it "starts a monitor thread" do
+  it "forks a unicorn server and starts a blocking monitor loop" do
+    Process.should_receive(:fork)
     @r = mock("exchange monitor")
     Code::Receiver.should_receive(:new).and_return(@r)
     @r.should_receive(:start!)
 
-    Code::Receiver.start_monitor!
+    Code::Receiver.start!
   end
 
   it "starts a unicorn git HTTP server" do

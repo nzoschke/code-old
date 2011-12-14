@@ -83,20 +83,18 @@ module Code
     end
 
     def self.start!
-      pid = fork { start_server! }
+      pid = Process.fork { start_server! }
       begin
-        start_monitor!
+        Code::Receiver.new.start!
       rescue => e
         puts e.message
         puts e.backtrace
       ensure
-        Process.kill("TERM", pid)
-        Process.wait(pid)
+        if pid
+          Process.kill("TERM", pid)
+          Process.wait(pid)
+        end
       end
-    end
-
-    def self.start_monitor!
-      Code::Receiver.new.start!
     end
 
     def self.start_server!
