@@ -24,7 +24,7 @@ describe Code::Receiver do
     Log.stub!(:write).and_return { |log| @logs << log }
 
     ENV["GIT_DIR"] = @app_dir = File.expand_path(File.join(__FILE__, "..", "fixtures", "rack"))
-    @r = Code::Receiver.new(metadata: {"stack" => "cedar", "env" => {}})
+    @r = Code::Receiver.new(data: { metadata: {"stack" => "cedar", "env" => {}} })
     @r.unstow_repo
   end
 

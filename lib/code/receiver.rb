@@ -6,9 +6,12 @@ module Code
     instrumentable do
       attr_reader :data, :exchange
     
-      def initialize(data={})
-        @exchange = Exchange.new
-        @data = data
+      def initialize(opts={})
+        opts.reverse_merge!(data: {}, server_pid: nil)
+
+        @data       = opts[:data]
+        @exchange   = Exchange.new
+        @server_pid = opts[:server_pid]
       end
 
       def start!
@@ -21,6 +24,8 @@ module Code
 
       def monitor_queue
         begin
+          monitor_server # don't reply if server process is no longer running
+
           if d = exchange.dequeue("backend.cedar", timeout: 10)
             age = Time.now - d[:created_at]
             @data = d if age < 10
@@ -30,6 +35,17 @@ module Code
           end
         end while @data.empty?
         exchange.reply(data)
+      end
+
+      def monitor_server
+        return unless @server_pid
+
+        begin
+          Process.getpgid @server_pid
+        rescue Errno::ESRCH
+          Log.log(test_server: true, pid: @server_pid, empty: "true")
+          exit(1)
+        end
       end
 
       def unstow_repo

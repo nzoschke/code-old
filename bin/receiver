@@ -27,7 +27,7 @@ opts = {
 pid = Process.fork { Unicorn::HttpServer.new(app, opts).start.join }
 
 begin
-  Code::Receiver.new.start!
+  Code::Receiver.new(server_pid: pid).start!
 rescue => e
   puts e.message
   puts e.backtrace
