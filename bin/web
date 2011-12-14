@@ -1,5 +1,16 @@
-#!/bin/bash
-BIN_DIR=$(cd $(dirname $0); pwd)
-APP_DIR=$(dirname $BIN_DIR)
+#!/usr/bin/env ruby
+require "rack"
+require "unicorn"
+require "./lib/code"
 
-exec bundle exec unicorn -c etc/web.conf.rb -p ${PORT:-5000} etc/web.ru
+app = Rack::Builder.new {
+  map("/")        { run Code::Web::Director }
+  map("/pushes")  { run Code::Web::PushAPI  }
+}
+
+rackup_opts = Unicorn::Configurator::RACKUP
+rackup_opts[:port] = ENV["PORT"] || 5000
+rackup_opts[:set_listener] = true
+opts = rackup_opts[:options]
+opts.reverse_merge!(timeout: 60, worker_processes: 4)
+Unicorn::HttpServer.new(app, opts).start.join
