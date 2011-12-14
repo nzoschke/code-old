@@ -40,7 +40,7 @@ module Code
         # persist metadata and env to the disk
         File.open("#{WORK_DIR}/.tmp/metadata.yml", "w") { |f| f.write YAML.dump data[:metadata] }
         File.open("#{WORK_DIR}/.tmp/build_env", "w") do |f|
-          data[:metadata]["env"].merge("PATH" => ENV["PATH"]).each do |k,v|
+          data[:metadata]["env"].merge("PATH" => ENV["PATH"], "APP_DIR" => APP_DIR).each do |k,v|
             v = v.gsub(/'/, "\\\\'")  # escape any single quotes with backslash
             f.write("#{k}=$'#{v}'\n") # use bash $'...' ANSI-C quoting
           end
