@@ -12,5 +12,8 @@ rackup_opts = Unicorn::Configurator::RACKUP
 rackup_opts[:port] = ENV["PORT"] || 5000
 rackup_opts[:set_listener] = true
 opts = rackup_opts[:options]
-opts.reverse_merge!(timeout: 60, worker_processes: 4)
+opts.reverse_merge!(timeout: 60, worker_processes: 4, before_fork: lambda { |server,worker|
+  Sequel::DATABASES.each { |db| db.disconnect }
+  Sequel.connect(ENV["DATABASE_URL"] || raise("no DATABASE_URL set"))
+})
 Unicorn::HttpServer.new(app, opts).start.join
