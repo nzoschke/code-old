@@ -15,7 +15,11 @@ module Code
       end
 
       def start!
-        monitor_queue
+        begin
+          monitor_server
+          monitor_queue
+        end while @data.empty?
+
         unstow_repo
         reply_exchange
         monitor_git && stow_repo
@@ -23,21 +27,20 @@ module Code
       end
 
       def monitor_queue
-        begin
-          monitor_server # don't reply if server process is no longer running
-
-          if d = exchange.dequeue("backend.cedar", timeout: 10)
-            age = Time.now - d[:created_at]
-            @data = d if age < 10
-            Log.log(monitor_queue: true, empty: "false", exchange_key: d[:exchange_key], age: age)
-          else
-            Log.log(monitor_queue: true, empty: "true")
+        if d = exchange.dequeue("backend.cedar", timeout: 10)
+          age = Time.now - d[:created_at]
+          Log.log(monitor_queue: true, empty: "false", exchange_key: d[:exchange_key], age: age)
+          if age < 10
+            exchange.reply(d)
+            return @data = d
           end
-        end while @data.empty?
-        exchange.reply(data)
+        end
+        
+        Log.log(monitor_queue: true, empty: "true")
       end
 
       def monitor_server
+        # abort if server process is no longer running
         return unless @server_pid
 
         begin
