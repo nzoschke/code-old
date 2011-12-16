@@ -136,10 +136,12 @@ module Code
         name      = "#{template}-#{SecureRandom.hex(4)}"
         stack     = ENV["STACK"]
         r = JSON.parse heroku.post({app: {name: name, stack: stack, template: template}})
-        Log.log(spawn: true, name: name, id: r["id"])
+        Log.log(spawn: true, create: true, name: name, id: r["id"])
 
         hostname = URI.parse(r["web_url"]).host
-        heroku[name]["config_vars"].put(JSON.dump(HOSTNAME: hostname, RECEIVER: "true"))
+        env = {HOSTNAME: hostname, RECEIVER: "true"}
+        heroku[name]["config_vars"].put(JSON.dump env)
+        Log.log(spawn: true, env: true, name: name, id: r["id"], env: env.inspect)
 
         r["name"]
       end
@@ -149,7 +151,7 @@ module Code
         # TODO: restart crashed servers
         r = JSON.parse heroku.get
         names = r.select { |a| a["name"] =~ /^#{template}-[a-f0-9]+$/ }.map { |a| a["name"] }
-        Log.log(poll: true, num: names.length, names: names.join(","))
+        Log.log(poll: true, num: names.length, names: names.join(" "))
         names
       end
 
