@@ -116,4 +116,54 @@ module Code
     Log.instrument(self, :generate_env)
     Log.instrument(self, :gc)
   end
+
+  class HerokuAppMonitor < Monitor
+    instrumentable do
+      def heroku
+        RestClient::Resource.new("https://api.heroku.com",
+          user:     "",
+          password: ENV["HEROKU_API_KEY"],
+          headers:  { accept: :json }
+        )["apps"]
+      end
+
+      def template
+        ENV["HOSTNAME"].split(".").first
+      end
+
+      def spawn(cmd, env={})
+        # create a new code-$HASH app from a template
+        name      = "#{template}-#{SecureRandom.hex(4)}"
+        stack     = ENV["STACK"]
+        r = JSON.parse heroku.post({app: {name: name, stack: stack, template: template}})
+        Log.log(spawn: true, name: name, id: r["id"])
+
+        hostname = URI.parse(r["web_url"]).host
+        heroku[name]["config_vars"].put(JSON.dump(HOSTNAME: hostname))
+
+        r["name"]
+      end
+
+      def poll
+        # count number of code-$HASH apps
+        # TODO: restart crashed servers
+        r = JSON.parse heroku.get
+        names = r.select { |a| a["name"] =~ /^#{template}-[a-f0-9]+$/ }.map { |a| a["name"] }
+        Log.log(poll: true, num: names.length, names: names.join(","))
+        names
+      end
+
+      def gc
+        # TODO: destroy some crashed apps if scaling down
+      end
+
+      def generate_env; end # noops
+      def kill_all;     end
+      def kill(pid);    end
+    end
+
+    Log.instrument(self, :spawn, eval: "{cmd: args[0], env: args[1].inspect}")
+    Log.instrument(self, :poll)
+    Log.instrument(self, :gc)
+  end
 end
