@@ -9,8 +9,7 @@ module Code
       end
 
       def forward!(hostname)
-        puts env.inspect
-        url  = "http://#{hostname}"
+        url  = "#{env["rack.url_scheme"]}://#{hostname}"
         url += env["PATH_INFO"]
         url += "?" + env["QUERY_STRING"] unless env["QUERY_STRING"].empty?
         redirect url, 302
