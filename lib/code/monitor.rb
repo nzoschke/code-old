@@ -150,18 +150,18 @@ module Code
         # count number of code-$HASH apps
         r = JSON.parse heroku.get
         names = r.select { |a| a["name"] =~ /^#{template}-[a-f0-9]+$/ }.map { |a| a["name"] }
-        Log.log(poll: true, needed: num_processes, up: names.length, names: names.join(" "))
 
-        # restart any crashed apps        
+        # destroy crashed apps        
         names.each do |name|
           r = JSON.parse heroku[name]["ps"].get
-          states = r.map { |ps| ps["state"] }
-          next unless states.include? "crashed"
+          next unless r.map { |ps| ps["state"] }.include?("crashed")
 
-          heroku[name]["ps"]["restart"].post({})
-          Log.log(poll: true, restart: true, name: name)
+          heroku[name].delete
+          Log.log(poll: true, delete: true, name: name)
+          names -= [name]
         end
 
+        Log.log(poll: true, needed: num_processes, up: names.length)
         names
       end
 
