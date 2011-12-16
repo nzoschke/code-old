@@ -139,7 +139,7 @@ module Code
         Log.log(spawn: true, name: name, id: r["id"])
 
         hostname = URI.parse(r["web_url"]).host
-        heroku[name]["config_vars"].put(JSON.dump(HOSTNAME: hostname))
+        heroku[name]["config_vars"].put(JSON.dump(HOSTNAME: hostname, RECEIVER: "true"))
 
         r["name"]
       end
