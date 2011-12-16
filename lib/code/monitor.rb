@@ -19,7 +19,7 @@ module Code
         loop do
           start_all
           gc if (i+=1)%10 == 0
-          sleep 10
+          sleep 30
         end
       rescue SystemExit, Interrupt, SignalException => e
         kill_all
