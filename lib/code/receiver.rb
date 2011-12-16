@@ -27,7 +27,7 @@ module Code
       end
 
       def monitor_queue
-        if d = exchange.dequeue("backend.cedar", timeout: 10)
+        if d = exchange.dequeue("backend.cedar", timeout: 30)
           age = Time.now - d[:created_at]
           Log.log(monitor_queue: true, empty: "false", exchange_key: d[:exchange_key], age: age)
           if age < 10
