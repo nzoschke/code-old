@@ -158,7 +158,7 @@ module Code
           states = r.map { |ps| ps["state"] }
           next unless states.include? "crashed"
 
-          heroku[name]["ps"]["restart"].post
+          heroku[name]["ps"]["restart"].post({})
           Log.log(poll: true, restart: true, name: name)
         end
 
