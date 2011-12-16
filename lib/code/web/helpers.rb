@@ -9,6 +9,7 @@ module Code
       end
 
       def forward!(hostname)
+        puts env.inspect
         url  = "http://#{hostname}"
         url += env["PATH_INFO"]
         url += "?" + env["QUERY_STRING"] unless env["QUERY_STRING"].empty?
