@@ -148,10 +148,20 @@ module Code
 
       def poll
         # count number of code-$HASH apps
-        # TODO: restart crashed servers
         r = JSON.parse heroku.get
         names = r.select { |a| a["name"] =~ /^#{template}-[a-f0-9]+$/ }.map { |a| a["name"] }
         Log.log(poll: true, needed: num_processes, up: names.length, names: names.join(" "))
+
+        # restart any crashed apps        
+        names.each do |name|
+          r = JSON.parse heroku[name]["ps"].get
+          states = r.map { |ps| ps["state"] }
+          next unless states.include? "crashed"
+
+          heroku[name]["ps"]["restart"].post
+          Log.log(poll: true, restart: true, name: name)
+        end
+
         names
       end
 
