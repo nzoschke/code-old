@@ -151,7 +151,7 @@ module Code
         # TODO: restart crashed servers
         r = JSON.parse heroku.get
         names = r.select { |a| a["name"] =~ /^#{template}-[a-f0-9]+$/ }.map { |a| a["name"] }
-        Log.log(poll: true, num: names.length, names: names.join(" "))
+        Log.log(poll: true, needed: num_processes, up: names.length, names: names.join(" "))
         names
       end
 
