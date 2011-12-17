@@ -14,7 +14,10 @@ module Code
       use Rack::Session::Cookie, :secret => ENV["SECURE_KEY"], :expire_after => (60 * 60 * 24 * 7)
 
       get "/" do
-        redirect("/auth/google") if !session["authorized"]
+        if !session["authorized"]
+          session["from"] = "/pushes"
+          redirect("/auth/google") 
+        end
 
         @pushes = Push.order(:created_at.desc).limit(100)
         erb :pushes

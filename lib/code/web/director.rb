@@ -17,7 +17,7 @@ module Code
 
       post "/auth/google/callback" do
         session["authorized"] = true
-        redirect("/")
+        redirect(session["from"] || "/")
       end
 
       get "/:app_name.git/info/refs" do
