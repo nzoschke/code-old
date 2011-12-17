@@ -5,5 +5,5 @@ Bundler.setup
 require "./lib/code"
 
 cls = Code::Monitor
-cls = Code::HerokuAppMonitor if ENV["RACK_ENV"] == "production"
+cls = Code::HerokuMonitor if ENV["RACK_ENV"] == "production"
 cls.new("bin/receiver").run!
