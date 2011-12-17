@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
+require "bundler"
+Bundler.setup
+
 require "./lib/code"
 
 cls = Code::Monitor
