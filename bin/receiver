@@ -1,6 +1,4 @@
 #!/usr/bin/env ruby
-require "bundler"
-Bundler.setup
 
 # Heroku cedar hack: clear /app to use as build dir
 app_dir = File.expand_path(__FILE__ + "/../..")
@@ -9,6 +7,9 @@ if ENV["RACK_ENV"] == "production" && app_dir == "/app"
   `mv /app /tmp`
   Dir.chdir("/tmp/app")
 end
+
+require "bundler"
+Bundler.setup
 
 require "unicorn"
 require "./lib/code"
