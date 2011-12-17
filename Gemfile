@@ -6,6 +6,8 @@ gem "rest-client"
 gem "sequel"
 gem "sinatra"
 gem "unicorn"
+gem "omniauth", "0.3.2"
+gem "openid-redis-store", "0.0.2"
 
 group :development do
   gem "sqlite3"

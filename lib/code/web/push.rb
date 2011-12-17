@@ -1,3 +1,4 @@
+require "redis"
 require "sinatra"
 require "yaml"
 require "./lib/code/models"
@@ -10,7 +11,11 @@ module Code
 
       set :views, File.join(APP_DIR, "views")
 
+      use Rack::Session::Cookie, :secret => ENV["SECURE_KEY"], :expire_after => (60 * 60 * 24 * 7)
+
       get "/" do
+        redirect("/auth/google") if !session["authorized"]
+
         @pushes = Push.order(:created_at.desc).limit(100)
         erb :pushes
       end

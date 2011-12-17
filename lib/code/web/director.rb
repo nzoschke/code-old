@@ -1,3 +1,5 @@
+require "oa-openid"
+require "openid_redis_store"
 require "sinatra"
 
 module Code
@@ -6,6 +8,17 @@ module Code
       helpers Helpers
 
       set :public_folder, File.join(APP_DIR, "public")
+
+      use Rack::Session::Cookie, :secret => ENV["SECURE_KEY"], :expire_after => (60 * 60 * 24 * 7)
+      use OmniAuth::Strategies::GoogleApps,
+        OpenID::Store::Redis.new(Redis.connect(:url => ENV["REDIS_URL"])),
+        :name   => "google",
+        :domain => "heroku.com"
+
+      post "/auth/google/callback" do
+        session["authorized"] = true
+        redirect("/")
+      end
 
       get "/:app_name.git/info/refs" do
         metadata = new_release!(params[:app_name])
