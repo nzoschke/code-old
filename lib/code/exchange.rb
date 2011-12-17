@@ -2,6 +2,7 @@ $:.delete_if { |p| p =~ /ruby-redis/ } # ruby-redis messes up Redis module; remo
 
 require "redis"
 require "yaml"
+require "socket"
 
 module Code
   class Exchange
@@ -20,7 +21,8 @@ module Code
       end
 
       def hostname
-        ENV["HOSTNAME"] || "localhost:#{ENV["PORT"]}"
+        local_ip = UDPSocket.open { |s| s.connect("64.233.187.99", 1); s.addr.last }
+        "#{local_ip}:#{ENV["PORT"]}"
       end
 
       def enqueue(key, data={})
