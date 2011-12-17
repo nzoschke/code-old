@@ -17,6 +17,7 @@ describe "Code::Exchange" do
     Log.stub!(:write).and_return { |log| @logs << log }
 
     @ex = Code::Exchange.new
+    @ex.stub!(:hostname).and_return("10.92.38.48:6291")
     @ex.redis.flushdb
   end
 
@@ -28,12 +29,14 @@ describe "Code::Exchange" do
 
   it "logs around exchange" do
     _ex = Code::Exchange.new
+    _ex.stub!(:hostname).and_return("10.92.38.48:9242")
+
     Thread.new { _ex.reply _ex.dequeue("backend.cedar") }
     @ex.exchange("backend.cedar", {app_name: "noah"}, name: "noah")
 
-    @logs.should include "exchange hostname=localhost: key=backend.cedar at=start"
-    @logs.should include "enqueue hostname=localhost: key=backend.cedar at=start"
-    @logs.should include "dequeue hostname=localhost: key=backend.cedar at=start"
+    @logs.should include "exchange hostname=10.92.38.48:6291 key=backend.cedar at=start"
+    @logs.should include "enqueue hostname=10.92.38.48:6291 key=backend.cedar at=start"
+    @logs.should include "dequeue hostname=10.92.38.48:9242 key=backend.cedar at=start"
   end
 
   it "raises an exception and deletes job if exchange failed" do
@@ -43,13 +46,12 @@ describe "Code::Exchange" do
 
   it "enqueues a message and gets a reply on a unique exchange key" do
     @ex.stub!(:generate_key).and_return("ex.abc123")
-    @ex.stub!(:hostname).and_return("route.heroku.com:3117")
 
     @ex.enqueue("backend.cedar", {app_name: "noah"})  # director
     @ex.reply(@ex.dequeue("backend.cedar"))           # backend
     data = @ex.dequeue("ex.abc123")                   # director
 
-    data.should include_hash({app_name: "noah", hostname: "route.heroku.com:3117", exchange_key: "ex.abc123"})
+    data.should include_hash({app_name: "noah", hostname: "10.92.38.48:6291", exchange_key: "ex.abc123"})
   end
 
   it "maps an app name to a unique exchange key" do

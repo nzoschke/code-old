@@ -43,21 +43,23 @@ describe "Code::Web::Director" do
       "backend.cedar",
       hash_including(app_name: "code-staging"),
       {:name => "code-staging", timeout: 10}
-    ).and_return(hostname: "route.heroku.com:3333", exchange_key: "ex.abc123")
+    ).and_return(hostname: "10.92.38.48:6291", exchange_key: "ex.abc123")
     @ex.should_receive(:exchange).with("ex.abc123", {}, {timeout: 120})
 
+    FakeWeb.register_uri(:get, "http://:API_TOKEN@10.92.38.48:6291/code-staging.git/info/refs", :body => "", :status => ["200", "OK"])
+
     get "/code-staging.git/info/refs"
-    last_response.status.should == 302
-    last_response.location.should == "http://route.heroku.com:3333/code-staging.git/info/refs"
+    last_response.status.should == 200
   end
 
   it "posts a pack to a repo and redirects to a backend" do
     authorize("", "API_TOKEN")
 
-    @ex.should_receive(:get).with("code-staging").and_return(hostname: "route.heroku.com:3333")
+    @ex.should_receive(:get).with("code-staging").and_return(hostname: "10.92.38.48:6291")
+
+    FakeWeb.register_uri(:post, "http://:API_TOKEN@10.92.38.48:6291/code-staging.git/git-receive-pack", :body => "", :status => ["200", "OK"])
 
     post "/code-staging.git/git-receive-pack"
-    last_response.status.should == 302
-    last_response.location.should == "http://route.heroku.com:3333/code-staging.git/git-receive-pack"
+    last_response.status.should == 200
   end
 end
