@@ -1,6 +1,7 @@
 source :rubygems
 
 gem "pg"
+gem "rack-streaming-proxy", :git => "https://github.com/nzoschke/rack-streaming-proxy.git"
 gem "redis"
 gem "rest-client"
 gem "sequel"

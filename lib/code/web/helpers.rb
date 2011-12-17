@@ -1,4 +1,5 @@
 require "json"
+require "rack/streaming_proxy"
 require "rest-client"
 
 module Code
@@ -6,6 +7,24 @@ module Code
     module Helpers
       def exchange
         @exchange ||= Code::Exchange.new
+      end
+
+      def proxy!(hostname)
+        req  = Rack::Request.new(env)
+        uri  = "#{env["rack.url_scheme"]}://#{hostname}"
+        uri += env["PATH_INFO"]
+        uri += "?" + env["QUERY_STRING"] unless env["QUERY_STRING"].empty?
+
+        begin # only want to catch proxy errors, not app errors
+          proxy = Rack::StreamingProxy::ProxyRequest.new(req, uri)
+          [proxy.status, proxy.headers, proxy]
+        rescue => e
+          msg = "Proxy error when proxying to #{uri}: #{e.class}: #{e.message}"
+          env["rack.errors"].puts msg
+          env["rack.errors"].puts e.backtrace.map { |l| "\t" + l }
+          env["rack.errors"].flush
+          raise StandardError, msg
+        end
       end
 
       def forward!(hostname)

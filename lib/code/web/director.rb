@@ -36,21 +36,21 @@ module Code
 
         # block for receiver to unstow
         exchange.exchange(d[:exchange_key], {}, timeout: 120)
-        forward! d[:hostname]
+        proxy! d[:hostname]
       end
 
       post "/:app_name.git/git-receive-pack" do
         core_auth!(params[:app_name])
 
         d = exchange.get(params[:app_name])
-        forward! d[:hostname]
+        proxy! d[:hostname]
       end
 
       post "/:app_name.git/git-upload-pack" do
         core_auth!(params[:app_name])
 
         d = exchange.get(params[:app_name])
-        forward! d[:hostname]
+        proxy! d[:hostname]
       end
     end
   end
