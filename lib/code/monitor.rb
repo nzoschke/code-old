@@ -77,105 +77,22 @@ module Code
       end
 
       def spawn(cmd, env={})
-        r = JSON.parse heroku["ps"].post(command: cmd, type: cmd.split("/").last, attached: false, ps_env: env)
-        heroku["routes/attach"].put("url" => URI.escape("tcp://" + env["HOSTNAME"]), "ps" => r["process"])
+        r = JSON.parse heroku["ps"].post(command: cmd, type: cmd.split("/").last, attached: false)
         r["upid"]
       end
 
       def poll
         r = JSON.parse heroku["ps"].get
-        upids = r.select { |a| a["command"] == cmd && ["starting", "up"].include?(a["state"]) }.map { |a| a["upid"]}
-        Log.log(poll: true, num: upids.length)
+        upids = r.select { |a| a["command"] == cmd && ["starting", "up"].include?(a["state"]) }.map { |a| a["upid"] }
+        Log.log(poll: true, needed: num_processes, up: upids.length)
         upids
       end
 
-      def generate_env
-        r = JSON.parse heroku["routes"].post({})
-        {"HOSTNAME" => r["url"].gsub("tcp://", "")}
-      end
-
-      def gc
-        ps = JSON.parse heroku["ps"].get(accept: :json)
-        routes = JSON.parse heroku["routes"].get(accept: :json)
-
-        active_processes = ps.select { |ps| ["starting", "up"].include? ps["state"] }.map { |ps| ps["process" ] }
-        orphan_routes = routes.reject { |r| active_processes.include? r["ps"] }
-
-        orphan_routes.each do |route|
-          Log.log(gc: true, delete_route: true, url: route["url"])
-          heroku["routes?url=#{URI.escape(route["url"])}"].delete
-        end
-      end
-
-      def kill_all;  end # noops
-      def kill(pid); end
-    end
-
-    Log.instrument(self, :spawn, eval: "{cmd: args[0], env: args[1].inspect}")
-    Log.instrument(self, :poll)
-    Log.instrument(self, :generate_env)
-    Log.instrument(self, :gc)
-  end
-
-  class HerokuAppMonitor < Monitor
-    instrumentable do
-      def heroku
-        RestClient::Resource.new("https://api.heroku.com",
-          user:     "",
-          password: ENV["HEROKU_API_KEY"],
-          headers:  { accept: :json }
-        )["apps"]
-      end
-
-      def template
-        ENV["HOSTNAME"].split(".").first
-      end
-
-      def spawn(cmd, env={})
-        # create a new code-$HASH app from a template
-        name      = "#{template}-#{SecureRandom.hex(4)}"
-        stack     = ENV["STACK"]
-        r = JSON.parse heroku.post({app: {name: name, stack: stack, template: template}})
-        Log.log(spawn: true, create: true, name: name, id: r["id"])
-
-        hostname = URI.parse(r["web_url"]).host
-        env = {HOSTNAME: hostname, RECEIVER: "true"}
-        heroku[name]["config_vars"].put(JSON.dump env)
-        Log.log(spawn: true, env: true, name: name, id: r["id"], env: env.inspect)
-
-        r["name"]
-      end
-
-      def poll
-        # count number of code-$HASH apps
-        r = JSON.parse heroku.get
-        names = r.select { |a| a["name"] =~ /^#{template}-[a-f0-9]+$/ }.map { |a| a["name"] }
-
-        # destroy crashed apps        
-        names.each do |name|
-          r = JSON.parse heroku[name]["ps"].get
-          next unless r.map { |ps| ps["state"] }.include?("crashed")
-
-          heroku[name].delete
-          Log.log(poll: true, delete: true, name: name)
-          names -= [name]
-        end
-
-        Log.log(poll: true, needed: num_processes, up: names.length)
-        names
-      end
-
-      def gc
-        # TODO: destroy some crashed apps if scaling down
-      end
-
-      def generate_env; end # noops
-      def kill_all;     end
+      def kill_all;     end  # noops
       def kill(pid);    end
     end
 
     Log.instrument(self, :spawn, eval: "{cmd: args[0], env: args[1].inspect}")
     Log.instrument(self, :poll)
-    Log.instrument(self, :gc)
   end
 end
