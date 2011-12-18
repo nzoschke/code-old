@@ -88,6 +88,10 @@ module Code
         upids
       end
 
+      def generate_env
+        {}
+      end
+
       def kill_all;     end  # noops
       def kill(pid);    end
     end
