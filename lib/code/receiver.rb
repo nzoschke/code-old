@@ -15,6 +15,8 @@ module Code
       end
 
       def start!
+        write_ssh_config
+
         begin
           monitor_server
           monitor_queue
@@ -24,6 +26,15 @@ module Code
         reply_exchange
         monitor_git && stow_repo
         self_destruct
+      end
+
+      def write_ssh_config
+        ssh_dir = "#{ENV["HOME"]}/.ssh"
+        return if File.exist? ssh_dir
+
+        bash  "mkdir -p #{ssh_dir}"
+        write "#{ssh_dir}/config", "StrictHostKeyChecking=no"
+        write "#{ssh_dir}/id_rsa", ENV["SSH_PRIVATE_KEY"]
       end
 
       def monitor_queue
@@ -62,6 +73,7 @@ module Code
             "LOG_TOKEN" => ENV["LOG_TOKEN"], 
             "PATH"      => ENV["PATH"]
           ).each do |k,v|
+            next unless v
             v = v.gsub(/'/, "\\\\'")  # escape any single quotes with backslash
             f.write("#{k}=$'#{v}'\n") # use bash $'...' ANSI-C quoting
           end
@@ -105,6 +117,10 @@ module Code
       def bash(command)
         `#{command}`
       end
+
+      def write(path, contents)
+        File.open(path, "w") { |f| f.write(contents) }
+      end
     end
 
     Log.instrument(self, :monitor_queue,  eval: "{hostname: exchange.hostname}")
@@ -114,5 +130,6 @@ module Code
     Log.instrument(self, :stow_repo,      eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :self_destruct,  eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :bash,           eval: "{command:  args[0]}")
+    Log.instrument(self, :write,          eval: "{path:     args[0]}")
   end
 end
