@@ -74,8 +74,8 @@ module Code
             "PATH"      => ENV["PATH"]
           ).each do |k,v|
             next unless v
-            v = v.gsub(/'/, "\\\\'")  # escape any single quotes with backslash
-            f.write("#{k}=$'#{v}'\n") # use bash $'...' ANSI-C quoting
+            v = v.gsub(/'/, "\\\\'")         # escape any single quotes with backslash
+            f.write("export #{k}=$'#{v}'\n") # use bash $'...' ANSI-C quoting
           end
         end
       end
