@@ -2,7 +2,7 @@ STDERR.sync = true
 STDOUT.sync = true
 
 APP_DIR   ||= File.expand_path(File.join(__FILE__, "..", ".."))
-WORK_DIR  ||= "/app"
+WORK_DIR  ||= "/tmp/work"
 SYSTEM    ||= `echo $(uname)-$(uname -m)`.strip # Darwin-x86_64, Linux-x86_64, etc.
 
 ENV["PATH"] = "#{APP_DIR}/vendor/#{SYSTEM}/bin:#{ENV["PATH"]}" unless ENV["PATH"] =~ /#{SYSTEM}/
