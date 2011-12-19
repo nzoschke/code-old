@@ -13,7 +13,7 @@ app = Rack::Builder.new {
 opts = {
   before_fork:      ->(s,w) { Sequel::DATABASES[0].disconnect; Sequel.connect ENV["DATABASE_URL"] },
   listeners:        "0.0.0.0:#{ENV["PORT"] || 5000}",
-  timeout:          60,
+  timeout:          1800,
   worker_processes: 4
 }
 
