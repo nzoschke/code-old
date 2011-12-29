@@ -1,11 +1,16 @@
-STDERR.sync = true
-STDOUT.sync = true
+STDERR.sync = STDOUT.sync = true
 
 APP_DIR   ||= File.expand_path(File.join(__FILE__, "..", ".."))
 WORK_DIR  ||= "/tmp/work"
 SYSTEM    ||= `echo $(uname)-$(uname -m)`.strip # Darwin-x86_64, Linux-x86_64, etc.
 
-ENV["PATH"] = "#{APP_DIR}/vendor/#{SYSTEM}/bin:#{ENV["PATH"]}" unless ENV["PATH"] =~ /#{SYSTEM}/
+# prepend vendored binaries to path
+ENV["PATH"] = [
+  "#{APP_DIR}/vendor/#{SYSTEM}/bin",
+  "#{APP_DIR}/opt/slug-compiler/bin",
+  ENV["PATH"]
+].join(":") unless ENV["PATH"] =~ /#{SYSTEM}/
+
 ENV["TZ"]   = "UTC"
 
 require "./lib/log"

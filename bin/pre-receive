@@ -14,7 +14,7 @@ WORK_DIR=$(dirname $GIT_DIR)
 touch $TMP_DIR/start
 
 read oldrev newrev ref
-$APP_DIR/opt/slug-compiler/bin/slugc --trace --range=$oldrev..$newrev --meta=$TMP_DIR/metadata.yml --repo-dir=$GIT_DIR 2>&1
+slugc --trace --range=$oldrev..$newrev --meta=$TMP_DIR/metadata.yml --repo-dir=$GIT_DIR 2>&1
 touch $TMP_DIR/detect.log
 touch $TMP_DIR/release.log
 

@@ -69,7 +69,6 @@ module Code
         File.open("#{WORK_DIR}/.tmp/metadata.yml", "w") { |f| f.write YAML.dump data[:metadata] }
         File.open("#{WORK_DIR}/.tmp/build_env", "w") do |f|
           data[:metadata]["env"].merge(
-            "APP_DIR"   => APP_DIR,
             "LOG_TOKEN" => ENV["LOG_TOKEN"], 
             "PATH"      => ENV["PATH"]
           ).each do |k,v|
