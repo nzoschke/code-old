@@ -1,9 +1,6 @@
 require "./spec/spec_helper"
 
 describe Code::Models::Push do
-  before(:each) { Sequel::Migrator.apply(Sequel::DATABASES[0], "db/migrations") }
-  after(:each)  { Sequel::DATABASES[0].disconnect }
-
   before do
     @p = Code::Models::Push.create
   end
