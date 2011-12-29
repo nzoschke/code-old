@@ -4,9 +4,9 @@ describe Code::Models::Push do
   before(:each) { Sequel::Migrator.apply(Sequel::DATABASES[0], "db/migrations") }
   after(:each)  { Sequel::DATABASES[0].disconnect }
 
-  include Code::Models
-
-  before { @p = Push.create }
+  before do
+    @p = Code::Models::Push.create
+  end
 
   it "has a data model for metadata and logs for a push operation" do
     @p.columns.should == [
@@ -54,7 +54,7 @@ describe Code::Models::Push do
 
       last_response.status.should == 200
 
-      p = Push.last
+      p = Code::Models::Push.last
       p.app_id.should     == 1905640
       p.app_name.should   == "code-staging"
       p.stack.should      == "cedar"
