@@ -38,5 +38,10 @@ describe Code::Receiver do
   it "receives a push with new refs and compiles it" do
     out = `git push http://localhost:5000/rackapp.git master 2>&1`
     out.should =~ /-----> Heroku receiving push/
+
+    # app dumps build env; assert that it was cleaned
+    out.should     =~ /LOG_TOKEN/
+    out.should_not =~ /DATABASE_URL/
+    out.should_not =~ /REDIS_URL/
   end
 end

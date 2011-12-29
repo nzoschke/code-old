@@ -67,15 +67,14 @@ module Code
 
         # persist metadata and env to the disk
         File.open("#{WORK_DIR}/.tmp/metadata.yml", "w") { |f| f.write YAML.dump data[:metadata] }
-        File.open("#{WORK_DIR}/.tmp/build_env", "w") do |f|
-          data[:metadata]["env"].merge(
-            "LOG_TOKEN" => ENV["LOG_TOKEN"], 
-            "PATH"      => ENV["PATH"]
-          ).each do |k,v|
-            next unless v
-            v = v.gsub(/'/, "\\\\'")         # escape any single quotes with backslash
-            f.write("export #{k}=$'#{v}'\n") # use bash $'...' ANSI-C quoting
-          end
+
+        envdir = "#{WORK_DIR}/.tmp/env"
+        Dir.mkdir(envdir)
+        data[:metadata]["env"].merge(
+          "LOG_TOKEN" => ENV["LOG_TOKEN"], 
+          "PATH"      => ENV["PATH"]
+        ).each do |k,v|
+          File.open("#{envdir}/#{k}", "w") { |f| f.write v }
         end
       end
 
