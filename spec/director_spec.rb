@@ -1,7 +1,6 @@
 require "./spec/spec_helper"
 
 describe "Code::Web::Director" do
-  include Rack::Test::Methods
   include Code::Web::Helpers
 
   before do
@@ -29,37 +28,40 @@ describe "Code::Web::Director" do
     end
   end
 
+  def session(host="code.heroku.com")
+    @session ||= Rack::Test::Session.new(Rack::MockSession.new(app, host))
+  end
+
   it "uses basic auth" do
-    get "/code-staging.git/info/refs"
-    last_response.status.should == 401
-    last_response.headers.should include "WWW-Authenticate"
+    session.get "/code-staging.git/info/refs"
+    session.last_response.status.should == 401
+    session.last_response.headers.should include "WWW-Authenticate"
   end
 
   it "requests info for a repo and redirects to a backend" do
-    authorize("", "API_TOKEN")
+    session.authorize("", "API_TOKEN")
 
-    @ex.should_receive(:hostname).and_return("10.78.93.121:5238")
     @ex.should_receive(:exchange).with(
       "backend.cedar",
-      hash_including(app_name: "code-staging", push_api_url: "https://10.78.93.121:5238/pushes"),
+      hash_including(app_name: "code-staging", push_api_url: "https://code.heroku.com/pushes"),
       {:name => "code-staging", timeout: 10}
     ).and_return(hostname: "10.92.38.48:6291", exchange_key: "ex.abc123")
     @ex.should_receive(:exchange).with("ex.abc123", {}, {timeout: 120})
 
     FakeWeb.register_uri(:get, "http://:API_TOKEN@10.92.38.48:6291/code-staging.git/info/refs", :body => "", :status => ["200", "OK"])
 
-    get "/code-staging.git/info/refs"
-    last_response.status.should == 200
+    session.get "/code-staging.git/info/refs"
+    session.last_response.status.should == 200
   end
 
   it "posts a pack to a repo and redirects to a backend" do
-    authorize("", "API_TOKEN")
+    session.authorize("", "API_TOKEN")
 
     @ex.should_receive(:get).with("code-staging").and_return(hostname: "10.92.38.48:6291")
 
     FakeWeb.register_uri(:post, "http://:API_TOKEN@10.92.38.48:6291/code-staging.git/git-receive-pack", :body => "", :status => ["200", "OK"])
 
-    post "/code-staging.git/git-receive-pack"
-    last_response.status.should == 200
+    session.post "/code-staging.git/git-receive-pack"
+    session.last_response.status.should == 200
   end
 end
