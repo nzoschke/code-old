@@ -38,10 +38,10 @@ describe "Code::Web::Director" do
   it "requests info for a repo and redirects to a backend" do
     authorize("", "API_TOKEN")
 
-    @ex.should_receive(:hostname).and_return("code.heroku.com")
+    @ex.should_receive(:hostname).and_return("10.78.93.121:5238")
     @ex.should_receive(:exchange).with(
       "backend.cedar",
-      hash_including(app_name: "code-staging"),
+      hash_including(app_name: "code-staging", push_api_url: "https://10.78.93.121:5238/pushes"),
       {:name => "code-staging", timeout: 10}
     ).and_return(hostname: "10.92.38.48:6291", exchange_key: "ex.abc123")
     @ex.should_receive(:exchange).with("ex.abc123", {}, {timeout: 120})
