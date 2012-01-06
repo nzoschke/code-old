@@ -45,7 +45,12 @@ module Code
       end
 
       def heroku
-        RestClient::Resource.new("https://api.heroku.com", user: creds[0], password: creds[1])
+        host = "api.heroku.com"
+        if m = env["HTTP_HOST"].match(/(.*).code.heroku.com/)
+          host = "api.#{m[1]}.herokudev.com"
+        end
+
+        RestClient::Resource.new("https://#{host}", user: creds[0], password: creds[1])
       end
 
       def core_auth!(app_name)
