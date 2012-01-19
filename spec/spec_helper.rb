@@ -22,3 +22,18 @@ RSpec::Matchers.define :include_hash do |expected|
     actual.select { |k,v| expected.keys.include? k } == expected
   end
 end
+
+def metadata(opts={})
+  opts.reverse_merge! heroku_host: "heroku.com", stack: "cedar"
+  {
+      "env"               => {"BUILDPACK_URL" => "https://github.com/heroku/heroku-buildpack-ruby.git"},
+      "heroku_log_token"  => "t.8d3d88ea-31e5-47e5-9fac-1748101d05bc",
+      "id"                => 1905640,
+      "repo_get_url"      => "http://s3-external-1.amazonaws.com/heroku_repos/#{opts[:heroku_host]}/1905640.tgz",
+      "repo_put_url"      => "http://s3-external-1.amazonaws.com/heroku_repos/#{opts[:heroku_host]}/1905640.tgz",
+      "release_url"       => "https://SECRET_KEY@api.#{opts[:heroku_host]}/apps/code/1905640",
+      "slug_put_url"      => "http://s3-external-1.amazonaws.com/herokuslugs/#{opts[:heroku_host]}/HASH",
+      "user_email"        => "noah@heroku.com",
+      "stack"             => opts[:stack]
+    }
+end

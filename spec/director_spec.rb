@@ -10,22 +10,9 @@ describe "Code::Web::Director" do
     @ex = mock("exchange")
     Code::Exchange.stub!(:new).and_return(@ex)
 
-    metadata = {
-      "env"               => {"BUILDPACK_URL" => "https://github.com/heroku/heroku-buildpack-ruby.git"},
-      "heroku_log_token"  => "t.8d3d88ea-31e5-47e5-9fac-1748101d05bc",
-      "id"                => 1905640,
-      "repo_get_url"      => "http://s3-external-1.amazonaws.com/heroku_repos/heroku.com/1905640.tgz",
-      "repo_put_url"      => "http://s3-external-1.amazonaws.com/heroku_repos/heroku.com/1905640.tgz",
-      "release_url"       => "https://SECRET_KEY@api.heroku.com/apps/code/1905640",
-      "slug_put_url"      => "http://s3-external-1.amazonaws.com/herokuslugs/heroku.com/HASH",
-      "user_email"        => "noah@heroku.com",
-      "stack"             => "cedar"
-    }
-    staging_metadata = metadata.inject({}) { |h, (k,v)| h[k] = v.sub("heroku.com", "staging.herokudev.com") if v.is_a? String; h }
-
     FakeWeb.register_uri(:get, "https://api.heroku.com/apps/code-staging/releases/new", :body => "Unauthorized", :status => ["401", "Unauthorized"])
     FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging/releases/new", :body => JSON.dump(metadata), :status => ["200", "OK"])
-    FakeWeb.register_uri(:get, "https://:API_TOKEN@api.staging.herokudev.com/apps/code-staging/releases/new", :body => JSON.dump(staging_metadata), :status => ["200", "OK"])
+    FakeWeb.register_uri(:get, "https://:API_TOKEN@api.staging.herokudev.com/apps/code-staging/releases/new", :body => JSON.dump(metadata(heroku_host: "staging.herokudev.com")), :status => ["200", "OK"])
 
     FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging", :body => JSON.dump({}), :status => ["200", "OK"])
   end
@@ -84,5 +71,8 @@ describe "Code::Web::Director" do
     session.authorize("", "API_TOKEN")
     session.get "/code-staging.git/info/refs"
     session.last_response.status.should == 200
+  end
+
+  it "exchanges with a bamboo backend" do
   end
 end
