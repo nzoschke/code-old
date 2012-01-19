@@ -4,7 +4,7 @@ APP_DIR=$1
 API_URL=$2
 TMP_DIR=$APP_DIR/.tmp
 
-curl \
+curl -k \
   -F "metadata=@$TMP_DIR/metadata.yml"  \
   -F "detect=@$TMP_DIR/detect.log"      \
   -F "compile=@$TMP_DIR/compile.log"    \
