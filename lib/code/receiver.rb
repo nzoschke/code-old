@@ -12,7 +12,7 @@ module Code
         @data       = opts[:data]
         @exchange   = Exchange.new
         @server_pid = opts[:server_pid]
-        @stack      = ENV["STACK"] || "cedar"
+        @stack      = ENV["MAJOR_STACK"] || "cedar"
       end
 
       def start!
