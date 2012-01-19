@@ -25,7 +25,7 @@ module Code
 
         begin
           # find a lively receiver
-          d = exchange.exchange("backend.cedar", {
+          d = exchange.exchange("backend.#{metadata["stack"]}", {
             app_name:     params[:app_name],
             push_api_url: "https://#{env["HTTP_HOST"]}/pushes",
             metadata:     metadata,

@@ -73,6 +73,20 @@ describe "Code::Web::Director" do
     session.last_response.status.should == 200
   end
 
-  it "exchanges with a bamboo backend" do
+  it "exchanges with a bamboo backend based on metadata" do
+    FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging/releases/new", :body => JSON.dump(metadata(stack: "bamboo")), :status => ["200", "OK"])
+    session.authorize("", "API_TOKEN")
+
+    @ex.should_receive(:exchange).with(
+      "backend.bamboo",
+      hash_including(app_name: "code-staging", push_api_url: "https://code.heroku.com/pushes"),
+      {:name => "code-staging", timeout: 10}
+    ).and_return(hostname: "10.92.38.48:6291", exchange_key: "ex.abc123")
+    @ex.should_receive(:exchange).with("ex.abc123", {}, {timeout: 120})
+
+    FakeWeb.register_uri(:get, "http://:API_TOKEN@10.92.38.48:6291/code-staging.git/info/refs", :body => "", :status => ["200", "OK"])
+
+    session.get "/code-staging.git/info/refs"
+    session.last_response.status.should == 200
   end
 end
