@@ -45,17 +45,21 @@ module Code
       end
 
       def heroku_get!(path)
-        # TODO: log around
         host = "api.heroku.com"
         if m = env["HTTP_HOST"].match(/(.*).code.heroku.com/)
           host = "api.#{m[1]}.herokudev.com"
         end
-        
-        r = RestClient::Resource.new("https://#{host}", user: creds[0], password: creds[1])[path]
-        Log.log(heroku_get: true, resource: r.to_s)
+        resource = RestClient::Resource.new("https://#{host}", user: creds[0], password: creds[1])[path]
+
+        # TODO: s = Log.start ; s.end
+        start = Time.now
+        Log.log(heroku_get: true, at: :start, resource: resource.to_s)
 
         begin
-          JSON.parse r.get(accept: :json)
+          resource.get(accept: :json) do |response, request, result, &block|
+            Log.log(heroku_get: true, :at => :finish, elapsed: Time.now - start, :code => response.code)
+            response.code == 200 ? JSON.parse(response) : response.return!(request, result, &block)
+          end
         rescue RestClient::ResourceNotFound => e
           throw(:halt, [404, "Not Found"])
         rescue RestClient::Unauthorized => e
