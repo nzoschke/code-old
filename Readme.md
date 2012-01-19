@@ -53,3 +53,29 @@ GIT_DIR=spec/fixtures/rack/ git push https://$APP.herokuapp.com/$TESTAPP.git mas
 ```
 
 Review logs at the admin site: https://$APP.herokuapp.com/pushes
+
+Stack Backends
+--------------
+
+Each stack should have its own app to run the monitor and receiver processes,
+but share a REDIS_URL with the master director web process.
+
+STACK=bamboo
+APP=code-$(whoami)-$STACK
+DIRECTOR_APP=code-$(whoami)
+
+DIRECTOR_REDIS_URL=$(heroku config -s --app $DIRECTOR_APP | grep REDIS_URL | cut -d= -f2)
+HEROKU_API_KEY=$(grep -a2 api.heroku.com ~/.netrc | tail -1 | cut -d" " -f4)
+LOG_TOKEN=$(docbrown app:info $APP | grep ^log_token | sed 's/.*: //g')
+
+heroku create $APP -s $STACK
+heroku config:add --app $APP        \
+  HEROKU_API_KEY=$HEROKU_API_KEY    \
+  HEROKU_APP=$APP                   \
+  LOG_TOKEN=$LOG_TOKEN              \
+  NUM_PROCESSES=2                   \
+  RACK_ENV=production               \
+  REDIS_URL=$DIRECTOR_REDIS_URL     \
+  MAJOR_STACK=$STACK
+
+heroku scale monitor=1 --app $APP
