@@ -44,31 +44,31 @@ module Code
         auth.provided? && auth.basic? ? auth.credentials : auth!
       end
 
-      def heroku
+      def heroku_get!(path)
+        # TODO: log around
         host = "api.heroku.com"
         if m = env["HTTP_HOST"].match(/(.*).code.heroku.com/)
           host = "api.#{m[1]}.herokudev.com"
         end
+        
+        r = RestClient::Resource.new("https://#{host}", user: creds[0], password: creds[1])[path]
+        Log.log(heroku_get: true, resource: r.to_s)
 
-        RestClient::Resource.new("https://#{host}", user: creds[0], password: creds[1])
-      end
-
-      def core_auth!(app_name)
         begin
-          heroku["/apps/#{app_name}"]
-        rescue RestClient::Unauthorized => e
-          auth!
-        end
-      end
-
-      def new_release!(app_name)
-        begin
-          JSON.parse heroku["/apps/#{app_name}/releases/new"].get(accept: :json)
+          JSON.parse r.get(accept: :json)
         rescue RestClient::ResourceNotFound => e
           throw(:halt, [404, "Not Found"])
         rescue RestClient::Unauthorized => e
           auth!
         end
+      end
+
+      def core_auth!(app_name)
+        heroku_get! "/apps/#{app_name}"
+      end
+
+      def new_release!(app_name)
+        heroku_get! "/apps/#{app_name}/releases/new"
       end
     end
   end

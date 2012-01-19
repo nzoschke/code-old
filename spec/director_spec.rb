@@ -4,6 +4,9 @@ describe "Code::Web::Director" do
   include Code::Web::Helpers
 
   before do
+    @logs = []
+    Log.stub!(:write).and_return { |log| @logs << log }
+    
     @ex = mock("exchange")
     Code::Exchange.stub!(:new).and_return(@ex)
 
@@ -23,6 +26,8 @@ describe "Code::Web::Director" do
     FakeWeb.register_uri(:get, "https://api.heroku.com/apps/code-staging/releases/new", :body => "Unauthorized", :status => ["401", "Unauthorized"])
     FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging/releases/new", :body => JSON.dump(metadata), :status => ["200", "OK"])
     FakeWeb.register_uri(:get, "https://:API_TOKEN@api.staging.herokudev.com/apps/code-staging/releases/new", :body => JSON.dump(staging_metadata), :status => ["200", "OK"])
+
+    FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging", :body => JSON.dump({}), :status => ["200", "OK"])
   end
 
   def app
