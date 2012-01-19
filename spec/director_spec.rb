@@ -74,7 +74,7 @@ describe "Code::Web::Director" do
   end
 
   it "exchanges with a bamboo backend based on metadata" do
-    FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging/releases/new", :body => JSON.dump(metadata(stack: "bamboo")), :status => ["200", "OK"])
+    FakeWeb.register_uri(:get, "https://:API_TOKEN@api.heroku.com/apps/code-staging/releases/new", :body => JSON.dump(metadata(stack: "bamboo-mri-1.9.2")), :status => ["200", "OK"])
     session.authorize("", "API_TOKEN")
 
     @ex.should_receive(:exchange).with(

@@ -22,10 +22,11 @@ module Code
 
       get "/:app_name.git/info/refs" do
         metadata = new_release!(params[:app_name])
+        major_stack = metadata["stack"].split("-")[0]
 
         begin
           # find a lively receiver
-          d = exchange.exchange("backend.#{metadata["stack"]}", {
+          d = exchange.exchange("backend.#{major_stack}", {
             app_name:     params[:app_name],
             push_api_url: "https://#{env["HTTP_HOST"]}/pushes",
             metadata:     metadata,
