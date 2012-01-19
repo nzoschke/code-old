@@ -4,7 +4,7 @@ require "./lib/code"
 module Code
   class Receiver
     instrumentable do
-      attr_reader :data, :exchange
+      attr_reader :data, :exchange, :stack
     
       def initialize(opts={})
         opts.reverse_merge!(data: {}, server_pid: nil)
@@ -12,6 +12,7 @@ module Code
         @data       = opts[:data]
         @exchange   = Exchange.new
         @server_pid = opts[:server_pid]
+        @stack      = ENV["STACK"] || "cedar"
       end
 
       def start!
@@ -38,7 +39,7 @@ module Code
       end
 
       def monitor_queue
-        if d = exchange.dequeue("backend.cedar", timeout: 30)
+        if d = exchange.dequeue("backend.#{stack}", timeout: 30)
           age = Time.now - d[:created_at]
           Log.log(monitor_queue: true, empty: "false", exchange_key: d[:exchange_key], age: age)
           if age < 10
