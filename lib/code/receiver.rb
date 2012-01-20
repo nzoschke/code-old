@@ -71,6 +71,7 @@ module Code
 
         envdir = "#{WORK_DIR}/.tmp/env"
         Dir.mkdir(envdir)
+        data[:metadata]["env"].merge!("GEM_PATH"  => ENV["GEM_PATH"]) if ENV["MAJOR_STACK"] == "bamboo"
         data[:metadata]["env"].merge(
           "LOG_TOKEN" => ENV["LOG_TOKEN"], 
           "PATH"      => ENV["PATH"]
