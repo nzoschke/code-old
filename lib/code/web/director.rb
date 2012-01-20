@@ -15,6 +15,10 @@ module Code
         :name   => "google",
         :domain => "heroku.com"
 
+      get "/" do
+        "Hello world"
+      end
+
       post "/auth/google/callback" do
         session["authorized"] = true
         redirect(session["from"] || "/")
