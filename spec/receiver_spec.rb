@@ -6,9 +6,9 @@ describe Code::Receiver do
     @redis_pid = Process.spawn("ruby-redis", :out => w1)
     r1.readpartial(1024) # block until server flushes logs with pid
 
-    r2, w2 = IO.pipe
+    @r2, w2 = IO.pipe
     @server_pid = Process.spawn("bin/receiver", :out => w2, :err => w2)
-    r2.readpartial(1024) # block until server flushes logs with pid
+    @r2.readpartial(1024) # block until server flushes logs with pid
   end
 
   after(:all) do
