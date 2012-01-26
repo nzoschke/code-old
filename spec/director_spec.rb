@@ -38,7 +38,7 @@ describe "Code::Web::Director" do
 
     @ex.should_receive(:exchange).with(
       "backend.cedar",
-      hash_including(app_name: "code-staging", push_api_url: "https://code.heroku.com/pushes"),
+      hash_including(app_name: "code-staging", push_api_url: "https://code.heroku.com/pushes", action: "receive"),
       {:name => "code-staging", timeout: 10}
     ).and_return(hostname: "10.92.38.48:6291", exchange_key: "ex.abc123")
     @ex.should_receive(:exchange).with("ex.abc123", {}, {timeout: 120})
@@ -91,7 +91,15 @@ describe "Code::Web::Director" do
   end
 
   it "performs a background compile if metadata posted to /compiles" do
-    session.post "/compiles", YAML.dump(metadata), "CONTENT_TYPE" => "text/yaml"
+    meta = metadata(stack: "bamboo-mri-1.9.2")
+
+    @ex.should_receive(:exchange).with(
+      "backend.bamboo",
+      hash_including(app_name: "code-staging", push_api_url: "https://code.heroku.com/pushes", action: "compile"),
+      {:name => "code-staging", timeout: 10}
+    ).and_return(hostname: "10.92.38.48:6291", exchange_key: "ex.abc123")
+
+    session.post "/compiles", YAML.dump(meta), "CONTENT_TYPE" => "text/yaml"
     session.last_response.status.should == 200
     session.last_response.body.should == "ok"
   end

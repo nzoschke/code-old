@@ -34,6 +34,7 @@ module Code
             app_name:     params[:app_name],
             push_api_url: "https://#{env["HTTP_HOST"]}/pushes",
             metadata:     metadata,
+            action:       "receive"
           }, name: params[:app_name], timeout: 10)
         rescue Code::Exchange::ReplyError => e
           throw(:halt, [504, "Receiver not available"])
@@ -62,6 +63,18 @@ module Code
         metadata = YAML.load(request.body.read)
         app_name = metadata["url"].split(".")[0]
         major_stack = metadata["stack"].split("-")[0]
+
+        begin
+          # send a "compile" message to lively receiver
+          d = exchange.exchange("backend.#{major_stack}", {
+            app_name:     app_name,
+            push_api_url: "https://#{env["HTTP_HOST"]}/pushes",
+            metadata:     metadata,
+            action:       "compile"
+          }, name: app_name, timeout: 10)
+        rescue Code::Exchange::ReplyError => e
+          throw(:halt, [504, "Receiver not available"])
+        end
 
         "ok"
       end
