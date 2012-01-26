@@ -34,6 +34,7 @@ def metadata(opts={})
       "release_url"       => "https://SECRET_KEY@api.#{opts[:heroku_host]}/apps/code/1905640",
       "slug_put_url"      => "http://s3-external-1.amazonaws.com/herokuslugs/#{opts[:heroku_host]}/HASH",
       "user_email"        => "noah@heroku.com",
-      "stack"             => opts[:stack]
+      "stack"             => opts[:stack],
+      "url"               => "code-staging.herokuapp.com"
     }
 end

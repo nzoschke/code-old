@@ -89,4 +89,10 @@ describe "Code::Web::Director" do
     session.get "/code-staging.git/info/refs"
     session.last_response.status.should == 200
   end
+
+  it "performs a background compile if metadata posted to /compiles" do
+    session.post "/compiles", YAML.dump(metadata), "CONTENT_TYPE" => "text/yaml"
+    session.last_response.status.should == 200
+    session.last_response.body.should == "ok"
+  end
 end

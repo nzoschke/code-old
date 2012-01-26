@@ -57,6 +57,14 @@ module Code
         d = exchange.get(params[:app_name])
         proxy! d[:hostname]
       end
+
+      post "/compiles" do
+        metadata = YAML.load(request.body.read)
+        app_name = metadata["url"].split(".")[0]
+        major_stack = metadata["stack"].split("-")[0]
+
+        "ok"
+      end
     end
   end
 end
