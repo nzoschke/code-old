@@ -15,9 +15,16 @@ module Log
     write(unparse data)
   end
 
+  def file
+    @file   = nil if @path != ENV["LOG_FILE"]     # 'close' file if path changed
+    @path   = ENV["LOG_FILE"]                     # save path
+    @file ||= File.open(@path, "a") rescue STDOUT # return or re-open file
+  end
+
   def write(log)
     mtx.synchronize do
-      STDOUT.puts log
+      file.puts log
+      file.flush
     end
   end
 

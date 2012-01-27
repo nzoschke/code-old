@@ -2,13 +2,15 @@ require "./spec/spec_helper"
 
 describe Code::Receiver do
   before(:all) do
-    r1, w1 = IO.pipe
-    @redis_pid = Process.spawn("ruby-redis", :out => w1)
-    r1.readpartial(1024) # block until server flushes logs with pid
+    ENV["LOG_FILE"] = "/dev/null"
 
-    @r2, w2 = IO.pipe
+    r1, w1 = IO.pipe
+    @redis_pid = Process.spawn("ruby-redis", :out => w1, :err => w1)
+    r1.readpartial(1024).should =~ /ready to accept connections on port 6379/ # block until server flushes logs with pid
+
+    r2, w2 = IO.pipe
     @server_pid = Process.spawn("bin/receiver", :out => w2, :err => w2)
-    @r2.readpartial(1024) # block until server flushes logs with pid
+    r2.readpartial(1024).should =~ /listening on addr=0.0.0.0:5000/ # block until server flushes logs with pid
   end
 
   after(:all) do
@@ -20,9 +22,6 @@ describe Code::Receiver do
   end
 
   before do
-    @logs = []
-    Log.stub!(:write).and_return { |log| @logs << log }
-
     ENV["LOG_TOKEN"] = "t.abc123"
     ENV["GIT_DIR"] = File.expand_path(File.join(__FILE__, "..", "fixtures", "rack.git"))
     @r = Code::Receiver.new(data: { metadata: {"stack" => "cedar", "env" => {}} })
