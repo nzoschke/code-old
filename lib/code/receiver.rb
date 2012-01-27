@@ -24,7 +24,7 @@ module Code
         end while @data.empty?
 
         unstow_repo
-        compile || reply_exchange
+        compile || reply_ready
         monitor_git && stow_repo
         self_destruct
       end
@@ -84,7 +84,7 @@ module Code
         bash "cd #{WORK_DIR}/.git ; echo HEAD~1 HEAD refs/heads/master | #{APP_DIR}/bin/pre-receive &"
       end
 
-      def reply_exchange
+      def reply_ready
         d = exchange.dequeue(data[:exchange_key], timeout: 10)
         exchange.reply(d) if d
       end
@@ -136,7 +136,7 @@ module Code
     Log.instrument(self, :monitor_server, eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :monitor_queue,  eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :unstow_repo,    eval: "{hostname: exchange.hostname}")
-    Log.instrument(self, :reply_exchange, eval: "{hostname: exchange.hostname}")
+    Log.instrument(self, :reply_ready, eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :monitor_git,    eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :stow_repo,      eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :self_destruct,  eval: "{hostname: exchange.hostname}")
