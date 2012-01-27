@@ -26,7 +26,7 @@ end
 def metadata(opts={})
   opts.reverse_merge! heroku_host: "heroku.com", stack: "cedar"
   {
-      "env"               => {"BUILDPACK_URL" => "https://github.com/heroku/heroku-buildpack-ruby.git"},
+      "env"               => {},
       "heroku_log_token"  => "t.8d3d88ea-31e5-47e5-9fac-1748101d05bc",
       "id"                => 1905640,
       "repo_get_url"      => "http://s3-external-1.amazonaws.com/heroku_repos/#{opts[:heroku_host]}/1905640.tgz",
