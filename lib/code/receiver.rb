@@ -58,7 +58,7 @@ module Code
         begin
           Process.getpgid @server_pid
         rescue Errno::ESRCH
-          Log.log(test_server: true, pid: @server_pid, empty: "true")
+          Log.log(monitor_server: true, pid: @server_pid, empty: "true")
           exit(1)
         end
       end
@@ -123,6 +123,7 @@ module Code
       end
     end
 
+    Log.instrument(self, :monitor_server, eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :monitor_queue,  eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :unstow_repo,    eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :reply_exchange, eval: "{hostname: exchange.hostname}")
