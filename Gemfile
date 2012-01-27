@@ -10,8 +10,6 @@ gem "unicorn"
 gem "omniauth", "0.3.2"
 gem "openid-redis-store", "0.0.2"
 
-gem "rush"
-
 group :development do
   gem "sqlite3"
   gem "rake"

@@ -19,7 +19,6 @@ GEM
       addressable (~> 2.2.6)
       multipart-post (~> 1.1.3)
       rack (>= 1.1.0, < 2)
-    fattr (2.2.0)
     kgio (2.6.0)
     log4r (1.1.9)
     macaddr (1.5.0)
@@ -101,12 +100,8 @@ GEM
     ruby-redis (0.0.2)
       eventmachine
     rubyntlm (0.1.1)
-    rush (0.6.7)
-      session
     sequel (3.26.0)
     servolux (0.8.1)
-    session (3.1.0)
-      fattr
     sinatra (1.3.1)
       rack (~> 1.3, >= 1.3.4)
       rack-protection (~> 1.1, >= 1.1.2)
@@ -136,7 +131,6 @@ DEPENDENCIES
   rest-client
   rspec
   ruby-redis
-  rush
   sequel
   sinatra
   sqlite3
