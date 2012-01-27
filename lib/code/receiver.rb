@@ -24,7 +24,7 @@ module Code
         end while @data.empty?
 
         unstow_repo
-        reply_exchange
+        compile || reply_exchange
         monitor_git && stow_repo
         self_destruct
       end
@@ -70,8 +70,7 @@ module Code
         File.open("#{WORK_DIR}/.tmp/metadata.yml", "w") { |f| f.write YAML.dump data[:metadata] }
 
         envdir = "#{WORK_DIR}/.tmp/env"
-        Dir.mkdir(envdir)
-        data[:metadata]["env"].merge!("GEM_PATH"  => ENV["GEM_PATH"]) if ENV["MAJOR_STACK"] == "bamboo"
+        bash "mkdir -p #{envdir}"
         data[:metadata]["env"].merge(
           "LOG_TOKEN" => ENV["LOG_TOKEN"], 
           "PATH"      => ENV["PATH"]
@@ -80,9 +79,14 @@ module Code
         end
       end
 
+      def compile
+        return false if @data[:action] != "compile"
+        bash "cd #{WORK_DIR}/.git ; echo HEAD~1 HEAD refs/heads/master | #{APP_DIR}/bin/pre-receive &"
+      end
+
       def reply_exchange
         d = exchange.dequeue(data[:exchange_key], timeout: 10)
-        d ? exchange.reply(d) : self_destruct # if frontend disappeared, destroy repo
+        exchange.reply(d) if d
       end
 
       def monitor_git
@@ -98,9 +102,15 @@ module Code
 
           Log.log(monitor_git: true, age: age, info_start: info_start.to_s, rpc_start: rpc_start.to_s, compile_start: compile_start.to_s, compile_exit: compile_exit.to_s, rpc_exit: rpc_exit.to_s)
 
-          return true  if rpc_exit && exit_status == 0  # successful compile, stow repo
-          return false if rpc_exit                      # fetch or unsuccessful compile, throw away
-          return false if !rpc_start && age > 30        # noop, throw away
+          if @data[:action] == "compile"
+            return false if compile_exit                  # compile finished            
+            return false if !compile_start && age > 30    # compile never started
+          else
+            return true  if rpc_exit && exit_status == 0  # successful compile, stow repo
+            return false if rpc_exit                      # fetch or unsuccessful compile, throw away
+            return false if !rpc_start && age > 30        # noop, throw away
+          end
+
           sleep 5
         end
       end

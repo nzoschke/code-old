@@ -26,21 +26,49 @@ describe Code::Receiver do
     ENV["GIT_DIR"] = File.expand_path(File.join(__FILE__, "..", "fixtures", "rack.git"))
     @r = Code::Receiver.new(data: { metadata: {"stack" => "cedar", "env" => {}} })
     `rm -rf #{WORK_DIR}`
-    @r.unstow_repo
   end
 
-  it "receives a push with no refs" do
-    out = `git push http://localhost:5000/rackapp.git 2>&1`
-    out.should =~ /Everything up-to-date/
+  context "interactive http push" do
+    before { @r.unstow_repo } # set up an empty repo
+
+    it "receives a push with no refs" do
+      out = `git push http://localhost:5000/rack.git 2>&1`
+      out.should =~ /Everything up-to-date/
+    end
+
+    it "receives a push with new refs and compiles it" do
+      out = `git push http://localhost:5000/rack.git master 2>&1`
+      out.should =~ /-----> Heroku receiving push/
+      out.should =~ /-----> Launching.../
+
+      # app dumps build env; assert that it was cleaned
+      out.should     =~ /LOG_TOKEN/
+      out.should_not =~ /DATABASE_URL/
+      out.should_not =~ /REDIS_URL/
+    end
   end
 
-  it "receives a push with new refs and compiles it" do
-    out = `git push http://localhost:5000/rackapp.git master 2>&1`
-    out.should =~ /-----> Heroku receiving push/
+  context "background compile" do
+    it "compiles a slug without a push when :action=compile" do
+      meta = metadata
+      meta["repo_get_url"] = ENV["GIT_DIR"] # unstow from fixture directory
 
-    # app dumps build env; assert that it was cleaned
-    out.should     =~ /LOG_TOKEN/
-    out.should_not =~ /DATABASE_URL/
-    out.should_not =~ /REDIS_URL/
+      app_name = meta["url"].split(".")[0]
+      major_stack = meta["stack"].split("-")[0]
+
+      exchange = Code::Exchange.new
+      d = exchange.exchange("backend.#{major_stack}", {
+        app_name:     app_name,
+        push_api_url: "https://code.heroku.com/pushes",
+        metadata:     meta,
+        action:       "compile"
+      }, name: app_name, timeout: 10)
+
+      @r.monitor_git
+
+      out = File.read "#{WORK_DIR}/.tmp/compile.log"
+      out.should =~ /-----> Heroku receiving push/
+      out.should =~ /-----> Launching.../
+    end
   end
 end
