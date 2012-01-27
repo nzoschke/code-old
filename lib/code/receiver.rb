@@ -25,7 +25,7 @@ module Code
 
         unstow_repo
         compile || reply_ready
-        monitor_git && stow_repo
+        monitor_work && stow_repo
         self_destruct
       end
 
@@ -89,7 +89,7 @@ module Code
         exchange.reply(d) if d
       end
 
-      def monitor_git
+      def monitor_work
         started = Time.now
         loop do
           age = Time.now - started
@@ -100,7 +100,7 @@ module Code
           compile_exit    = File.exists? "#{WORK_DIR}/.tmp/exit"
           exit_status     = File.read("#{WORK_DIR}/.tmp/exit").strip.to_i rescue -1
 
-          Log.log(monitor_git: true, age: age, info_start: info_start.to_s, rpc_start: rpc_start.to_s, compile_start: compile_start.to_s, compile_exit: compile_exit.to_s, rpc_exit: rpc_exit.to_s)
+          Log.log(monitor_work: true, age: age, info_start: info_start.to_s, rpc_start: rpc_start.to_s, compile_start: compile_start.to_s, compile_exit: compile_exit.to_s, rpc_exit: rpc_exit.to_s)
 
           if @data[:action] == "compile"
             return false if compile_exit                  # compile finished            
@@ -137,7 +137,7 @@ module Code
     Log.instrument(self, :monitor_queue,  eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :unstow_repo,    eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :reply_ready, eval: "{hostname: exchange.hostname}")
-    Log.instrument(self, :monitor_git,    eval: "{hostname: exchange.hostname}")
+    Log.instrument(self, :monitor_work,    eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :stow_repo,      eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :self_destruct,  eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :bash,           eval: "{command:  args[0]}")

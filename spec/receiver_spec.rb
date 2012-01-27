@@ -64,7 +64,7 @@ describe Code::Receiver do
         action:       "compile"
       }, name: app_name, timeout: 10)
 
-      @r.monitor_git
+      @r.monitor_work
 
       out = File.read "#{WORK_DIR}/.tmp/compile.log"
       out.should =~ /-----> Heroku receiving push/
