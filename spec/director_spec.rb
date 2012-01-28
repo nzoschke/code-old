@@ -99,7 +99,7 @@ describe "Code::Web::Director" do
       {:name => "code-staging", timeout: 10}
     ).and_return(hostname: "10.92.38.48:6291", exchange_key: "ex.abc123")
 
-    session.post "/compiles", YAML.dump(meta), "CONTENT_TYPE" => "text/yaml"
+    session.post "/compiles", meta.to_json, "CONTENT_TYPE" => "application/json"
     session.last_response.status.should == 200
     session.last_response.body.should == "ok"
   end
