@@ -73,7 +73,7 @@ module Code
         bash "mkdir -p #{envdir}"
         data[:metadata]["env"].merge(
           "LOG_TOKEN" => ENV["LOG_TOKEN"], 
-          "PATH"      => ENV["PATH"]
+          "PATH"      => ENV["COMPILE_PATH"] || ENV["PATH"]
         ).each do |k,v|
           File.open("#{envdir}/#{k}", "w") { |f| f.write v }
         end

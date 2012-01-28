@@ -79,3 +79,8 @@ heroku config:add --app $APP        \
   MAJOR_STACK=$STACK
 
 heroku scale monitor=1 --app $APP
+
+The stack may need a different ruby to compile the slug than to run the receiver:
+
+heroku config:add --app $APP \
+  COMPILE_PATH=/usr/ruby1.8.6/bin:/usr/local/bin:/usr/bin:/bin
