@@ -81,7 +81,7 @@ module Code
 
       def compile
         return false if @data[:action] != "compile"
-        bash "cd #{WORK_DIR}/.git ; echo HEAD HEAD refs/heads/master | #{APP_DIR}/bin/pre-receive &"
+        fork { bash "cd #{WORK_DIR}/.git ; echo HEAD HEAD refs/heads/master | #{APP_DIR}/bin/pre-receive" }
       end
 
       def reply_ready
