@@ -26,6 +26,7 @@ module Code
         unstow_repo
         compile || reply_ready
         monitor_work && stow_repo
+        post_logs
         self_destruct
       end
 
@@ -119,8 +120,11 @@ module Code
         bash "bin/stow-repo #{WORK_DIR} '#{data[:metadata]["repo_put_url"]}'"
       end
 
-      def self_destruct
+      def post_logs
         bash "bin/post-logs #{WORK_DIR} '#{data[:push_api_url]}'"
+      end
+
+      def self_destruct
         Process.kill("TERM", $$)
       end
 
@@ -139,6 +143,7 @@ module Code
     Log.instrument(self, :reply_ready,    eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :monitor_work,   eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :stow_repo,      eval: "{hostname: exchange.hostname}")
+    Log.instrument(self, :post_logs,      eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :self_destruct,  eval: "{hostname: exchange.hostname}")
     Log.instrument(self, :bash,           eval: "{command:  args[0]}")
     Log.instrument(self, :write,          eval: "{path:     args[0]}")
