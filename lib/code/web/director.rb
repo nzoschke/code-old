@@ -60,6 +60,8 @@ module Code
       end
 
       post "/compiles" do
+        api_auth!
+
         metadata = JSON.load(request.body.read)
         
         app_name    = metadata["url"].split(".")[0]

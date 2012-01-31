@@ -74,6 +74,10 @@ module Code
       def new_release!(app_name)
         heroku_get! "/apps/#{app_name}/releases/new"
       end
+
+      def api_auth!
+        auth! unless [ENV["API_KEY_1"], ENV["API_KEY_2"]].include?(creds[1])
+      end
     end
   end
 end

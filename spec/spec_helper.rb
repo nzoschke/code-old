@@ -1,6 +1,8 @@
 ENV["DATABASE_URL"] = "sqlite:/"
 ENV["RACK_ENV"]     = "test"
 ENV["REDIS_URL"]    = "redis://localhost:6379"
+ENV["API_KEY_1"]    = "DEADBEEF"
+ENV["API_KEY_2"]    = "BEADFEED"
 
 require "bundler"
 Bundler.setup

@@ -91,6 +91,8 @@ describe "Code::Web::Director" do
   end
 
   it "performs a background compile if metadata posted to /compiles" do
+    session.authorize("", "DEADBEEF")
+
     meta = metadata(stack: "bamboo-mri-1.9.2")
 
     @ex.should_receive(:exchange).with(
