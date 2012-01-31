@@ -19,7 +19,7 @@ module Code
           redirect("/auth/google") 
         end
 
-        @pushes = Push.order(:created_at.desc).limit(100)
+        @pushes = Push.order(:created_at.desc).limit(20)
         erb :pushes
       end
 
