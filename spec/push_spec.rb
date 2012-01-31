@@ -13,7 +13,8 @@ describe Code::Models::Push do
       :buildpack_url, :framework,
       :detect, :compile, :release, :debug, :exit,
       :started_at, :finished_at,
-      :created_at, :updated_at
+      :created_at, :updated_at,
+      :metadata
     ]
   end
 

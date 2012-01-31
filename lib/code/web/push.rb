@@ -38,6 +38,7 @@ module Code
           stack:          metadata["stack"],
           buildpack_url:  metadata["env"]["BUILDPACK_URL"],
 
+          metadata:       YAML.dump(metadata),
           framework:      detect,
           detect:         detect,
           compile:        params[:compile][:tempfile].read,
