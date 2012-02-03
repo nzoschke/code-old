@@ -73,6 +73,7 @@ module Code
         envdir = "#{WORK_DIR}/.tmp/env"
         bash "mkdir -p #{envdir}"
         data[:metadata]["env"].merge(
+          "LANG"      => ENV["LANG"],
           "LOG_TOKEN" => ENV["LOG_TOKEN"], 
           "PATH"      => ENV["COMPILE_PATH"] || ENV["PATH"]
         ).each do |k,v|
