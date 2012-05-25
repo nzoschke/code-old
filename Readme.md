@@ -26,7 +26,7 @@ heroku addons:add securekey
 
 HEROKU_API_KEY=$(grep -a2 api.heroku.com ~/.netrc | tail -1 | cut -d" " -f4)
 HEROKU_DATABASE_URL=$(heroku config -s | grep HEROKU_SHARED_POSTGRESQL | cut -d= -f2)
-LOG_TOKEN=$(docbrown app:info $APP | grep ^log_token | sed 's/.*: //g')
+LOG_TOKEN=$(heroku sudo -x apps:info $APP | grep "^Log Token" | sed 's/.*: *//g')
 REDISTOGO_URL=$(heroku config -s | grep REDISTOGO_URL | cut -d= -f2)
 
 heroku config:add                   \
@@ -66,7 +66,7 @@ DIRECTOR_APP=code-$(whoami)
 
 DIRECTOR_REDIS_URL=$(heroku config -s --app $DIRECTOR_APP | grep REDIS_URL | cut -d= -f2)
 HEROKU_API_KEY=$(grep -a2 api.heroku.com ~/.netrc | tail -1 | cut -d" " -f4)
-LOG_TOKEN=$(docbrown app:info $APP | grep ^log_token | sed 's/.*: //g')
+LOG_TOKEN=$(heroku sudo -x apps:info $APP | grep "^Log Token" | sed 's/.*: *//g')
 
 heroku create $APP -s $STACK
 heroku config:add --app $APP        \
