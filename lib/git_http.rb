@@ -6,7 +6,7 @@ require 'time'
 require 'fileutils'
 
 class GitHttp
-  class App 
+  class App
 
     SERVICES = [
       ["POST", 'service_rpc',      "(.*?)/git-upload-pack$",  'upload-pack'],
@@ -38,7 +38,7 @@ class GitHttp
     def call(env)
       @env = env
       @req = Rack::Request.new(env)
-      
+
       cmd, path, @reqfile, @rpc = match_routing
 
       return render_method_not_allowed if cmd == 'not_allowed'

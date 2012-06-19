@@ -5,7 +5,7 @@ module Code
   class Receiver
     instrumentable do
       attr_reader :data, :exchange, :stack
-    
+
       def initialize(opts={})
         opts.reverse_merge!(data: {}, server_pid: nil)
 
@@ -48,7 +48,7 @@ module Code
             return @data = d
           end
         end
-        
+
         Log.log(monitor_queue: true, empty: "true")
       end
 
